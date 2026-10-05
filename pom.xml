@@ -84,6 +84,14 @@
 			<version>${commons-csv.version}</version>
 		</dependency>
 
+		<!-- DevTools for automatic restart and live reload -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+
 		<!-- Testing -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

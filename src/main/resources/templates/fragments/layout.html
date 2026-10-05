@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="header(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title th:text="${title} + ' — Extremis'">Extremis Attendance</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar-brand-custom {
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #2563eb, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .card-custom {
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 14px;
+            box-shadow: var(--card-shadow);
+            background: #ffffff;
+        }
+        .stat-card {
+            border-radius: 12px;
+            padding: 1.25rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.08);
+        }
+        .btn-custom-primary {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: #ffffff;
+            border: none;
+            font-weight: 500;
+            border-radius: 8px;
+            padding: 0.6rem 1.2rem;
+            transition: all 0.2s;
+        }
+        .btn-custom-primary:hover {
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+        .badge-role {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.35em 0.65em;
+            border-radius: 6px;
+        }
+        footer {
+            margin-top: auto;
+            border-top: 1px solid #e2e8f0;
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Navigation Bar -->
+    <nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top py-2">
+        <div class="container-fluid px-lg-4">
+            <a class="navbar-brand navbar-brand-custom fs-4 d-flex align-items-center gap-2" th:href="@{/}">
+                <i class="bi bi-shield-check text-primary"></i>
+                <span>Extremis</span>
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#extremisNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="extremisNavbar">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item" sec:authorize="hasRole('STUDENT')">
+                        <a class="nav-link fw-medium" th:href="@{/student/dashboard}"><i class="bi bi-grid-fill me-1"></i> Student Dashboard</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('FACULTY')">
+                        <a class="nav-link fw-medium" th:href="@{/faculty/dashboard}"><i class="bi bi-person-video3 me-1"></i> Faculty Dashboard</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('CLASS_TEACHER')">
+                        <a class="nav-link fw-medium" th:href="@{/teacher/dashboard}"><i class="bi bi-people-fill me-1"></i> Class Teacher</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                        <a class="nav-link fw-medium" th:href="@{/admin/dashboard}"><i class="bi bi-gear-fill me-1"></i> Admin Portal</a>
+                    </li>
+                </ul>
+
+                <!-- User profile & Logout -->
+                <div class="d-flex align-items-center gap-3" sec:authorize="isAuthenticated()">
+                    <div class="text-end d-none d-sm-block">
+                        <div class="fw-semibold small" sec:authentication="name">User</div>
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle badge-role" sec:authentication="principal.authorities[0]">ROLE</span>
+                    </div>
+                    <form th:action="@{/logout}" method="post" class="m-0">
+                        <button type="submit" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span class="d-none d-sm-inline">Sign Out</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Footer Fragment -->
+    <footer th:fragment="footer" class="py-3 text-center text-muted small bg-white mt-auto">
+        <div class="container">
+            <span>&copy; 2026 <strong>Extremis</strong> — Secure Student Presence & Attendance Platform (College PBL)</span>
+        </div>
+        <!-- Bootstrap 5 JS Bundle -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    </footer>
+
+</body>
+</html>
