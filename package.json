@@ -1,9 +1,0 @@
-{
-  "name": "extremis-smart-attendance",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Extremis Smart Attendance System - Arya College of Engineering & IT",
-  "scripts": {
-    "build": "echo 'Static assets ready for deployment'"
-  }
-}

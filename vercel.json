@@ -1,9 +1,10 @@
 {
+  "outputDirectory": "src/main/resources/public",
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/((?!css|js).*)$",
-      "destination": "/index.html"
+      "source": "/(.*)",
+      "destination": "/$1"
     }
   ]
 }
