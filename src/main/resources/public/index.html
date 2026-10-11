@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Extremis — Student Attendance Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- ==========================================
+         VIEW 1: SPLIT LOGIN SCREEN (Mockup 1)
+         ========================================== -->
+    <div id="login-view" class="view active">
+      <div class="login-wrapper">
+        <!-- Left Navy Brand Hero (Mockup 1 Left) -->
+        <div class="login-hero-panel">
+          <div class="brand-header">
+            <div class="brand-logo-icon">E</div>
+            <div class="brand-logo-text">Extremis</div>
+          </div>
+
+          <div class="hero-content">
+            <h1 class="hero-title">Smart attendance<br>for every lecture.</h1>
+            <p class="hero-desc">
+              Timetable, live verification and attendance records for students, faculty and admins.
+            </p>
+          </div>
+
+          <div class="hero-footer">
+            <span>Separate login for each role</span>
+          </div>
+        </div>
+
+        <!-- Right Form Panel (Mockup 1 Right) -->
+        <div class="login-form-panel">
+          <div class="form-container">
+            <div class="form-header">
+              <h2>Sign in</h2>
+              <p>Choose your role to continue.</p>
+            </div>
+
+            <!-- Role Capsule Toggle: Student | Faculty | Admin -->
+            <div class="role-segmented-control" role="tablist">
+              <button type="button" class="segment-btn active" data-role="STUDENT">Student</button>
+              <button type="button" class="segment-btn" data-role="FACULTY">Faculty</button>
+              <button type="button" class="segment-btn" data-role="ADMIN">Admin</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" autocomplete="off">
+              <div class="form-group">
+                <label id="login-id-label" for="login-username">Student ID</label>
+                <input type="text" id="login-username" class="form-input" placeholder="CS2024-001" required>
+              </div>
+
+              <div class="form-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" class="form-input" placeholder="••••••••" required>
+              </div>
+
+              <button type="submit" id="btn-submit-login" class="btn btn-primary btn-block">
+                <span>Sign In</span>
+              </button>
+            </form>
+
+            <!-- Bottom Policy Notice Card (Mockup 1 Bottom) -->
+            <div id="login-policy-banner" class="policy-notice-card">
+              <div class="notice-icon">🔒</div>
+              <div class="notice-text">
+                <strong>Single-device policy:</strong> Students can only sign in on one device at a time. Active session is locked.
+              </div>
+            </div>
+
+            <!-- Demo Quick-Fill Bar -->
+            <div class="demo-helpers">
+              <span class="demo-label">Quick Demo:</span>
+              <button type="button" class="demo-pill" onclick="quickFill('STUDENT', 'CS2024-001', 'student123')">Student (Aarav)</button>
+              <button type="button" class="demo-pill" onclick="quickFill('FACULTY', 'faculty.rajesh', 'faculty123')">Faculty</button>
+              <button type="button" class="demo-pill" onclick="quickFill('ADMIN', 'admin', 'admin123')">Admin</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         VIEW 2: STUDENT PORTAL (Full Desktop Dashboard)
+         ========================================== -->
+    <div id="student-view" class="view">
+      <div class="student-desktop-layout">
+        <!-- Top Navigation Bar -->
+        <header class="student-top-navbar">
+          <div class="navbar-brand-group">
+            <div class="brand-logo-icon">E</div>
+            <div class="brand-info">
+              <span class="brand-logo-text">Extremis</span>
+              <span class="portal-badge">Student Portal</span>
+            </div>
+          </div>
+
+          <div class="navbar-right-group">
+            <div class="campus-clock-pill">
+              <span class="pulse-dot"></span>
+              <span id="live-campus-clock">10:00 AM · Campus Realtime</span>
+            </div>
+            <div class="student-profile-chip">
+              <div id="student-avatar-badge" class="avatar-pill">ST</div>
+              <div class="chip-text">
+                <span id="student-name-display" class="chip-name">Hi, Student</span>
+                <span id="student-meta-display" class="chip-meta">Computer Science &amp; Engineering</span>
+              </div>
+            </div>
+            <button class="btn btn-outline btn-sm btn-logout-navbar" onclick="handleLogout()" title="Sign out">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+              <span>Sign out</span>
+            </button>
+          </div>
+        </header>
+
+        <!-- Main Desktop Content Container -->
+        <main class="student-desktop-main">
+          <!-- Active Hero Lecture Card (Spans Wide with Gorgeous Royal Blue Gradient) -->
+          <section id="hero-lecture-card" class="hero-lecture-card-desktop">
+            <div class="hero-card-left">
+              <div class="hero-status-pill">
+                <span class="pulse-dot"></span>
+                <span id="hero-status-text">Verification open · 09:05 AM</span>
+              </div>
+              <h2 id="hero-subject-name" class="hero-subject-title">Data Structures &amp; Algorithms</h2>
+              <p id="hero-details-text" class="hero-details-line">Prof. A. Mehta · Room 302 · 09:00 - 10:00 AM</p>
+              <div class="hero-tags-row">
+                <span class="hero-tag">📍 LT-102 Geofence Active</span>
+                <span class="hero-tag">⏱️ 5-Minute Window Open</span>
+                <span class="hero-tag">🔒 In-Memory Camera Verification</span>
+              </div>
+            </div>
+            <div class="hero-card-right">
+              <button id="hero-verify-action-btn" class="btn btn-hero-white-lg" onclick="openLiveVerificationModal()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                <span>Verify attendance</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- 2-Column Responsive Dashboard Body -->
+          <div class="student-grid-content">
+            <!-- Left Column: Today's Lectures Schedule -->
+            <div class="student-schedule-column">
+              <div class="section-header-row">
+                <div class="section-title-wrap">
+                  <h3>Today's Lecture Schedule</h3>
+                  <p>Branch Timetable &amp; Real-time Verification Status</p>
+                </div>
+                <span id="lectures-verified-counter" class="counter-badge-lg">0 of 4 verified</span>
+              </div>
+
+              <!-- List of Lecture Cards -->
+              <div id="student-timetable-list" class="timetable-list-desktop">
+                <!-- Dynamically generated via JS -->
+              </div>
+            </div>
+
+            <!-- Right Column: Verification Stats & Device Info -->
+            <div class="student-side-column">
+              <!-- Card 1: Today's Attendance Summary -->
+              <div class="side-card">
+                <h4 class="side-card-title">Attendance Status</h4>
+                <div class="progress-stats-box">
+                  <div class="progress-label-row">
+                    <span>Today's Verified Lectures</span>
+                    <strong id="side-progress-percent">0%</strong>
+                  </div>
+                  <div class="progress-bar-track">
+                    <div id="side-progress-fill" class="progress-bar-fill" style="width: 0%;"></div>
+                  </div>
+                </div>
+
+                <div class="stat-mini-grid">
+                  <div class="stat-mini-item">
+                    <span class="stat-mini-num" id="side-verified-count">0</span>
+                    <span class="stat-mini-label">Verified</span>
+                  </div>
+                  <div class="stat-mini-item">
+                    <span class="stat-mini-num" id="side-pending-count">4</span>
+                    <span class="stat-mini-label">Pending</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 2: Single-Device Security Lock -->
+              <div class="side-card security-card">
+                <div class="security-card-header">
+                  <span class="sec-icon">🔒</span>
+                  <div>
+                    <h4>Single-Device Policy</h4>
+                    <span class="sec-status-badge">Device Bound &amp; Active</span>
+                  </div>
+                </div>
+                <p class="sec-text">
+                  Your student account is currently active on this authorized device. Multiple simultaneous logins on another device or window are strictly blocked.
+                </p>
+                <div class="session-id-pill">
+                  <span>Session ID:</span>
+                  <strong id="side-session-id-display">SES-ACTIVE</strong>
+                </div>
+              </div>
+
+              <!-- Card 3: Camera & Privacy Guidelines -->
+              <div class="side-card privacy-card">
+                <h4 class="side-card-title">Camera &amp; Geofence Rules</h4>
+                <ul class="rule-list">
+                  <li><strong>Realtime Snapshot:</strong> Face must be aligned within the dashed oval guide.</li>
+                  <li><strong>Geofence Check:</strong> You must be physically inside college campus.</li>
+                  <li><strong>Privacy Protected:</strong> All snapshots are verified in-memory and <em>strictly never saved to disk</em>.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         VIEW 3: ADMIN & FACULTY DASHBOARD (Mockups 2 & 3)
+         ========================================== -->
+    <div id="admin-view" class="view">
+      <div class="dashboard-layout">
+        <!-- Dark Navy Sidebar (Mockups 2 & 3 Left) -->
+        <aside class="dashboard-sidebar">
+          <div class="sidebar-top">
+            <div class="brand-header">
+              <div class="brand-logo-icon">E</div>
+              <div class="brand-logo-text">Extremis</div>
+            </div>
+
+            <nav class="sidebar-nav">
+              <button class="nav-item active" data-tab="students" id="nav-students-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                <span>Students</span>
+              </button>
+              <button class="nav-item" data-tab="attendance" id="nav-attendance-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <span>Attendance records</span>
+              </button>
+              <button class="nav-item" data-tab="sessions" id="nav-sessions-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                <span>Active sessions</span>
+              </button>
+              <button class="nav-item" data-tab="timetable" id="nav-timetable-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                <span>Timetable &amp; Verification</span>
+              </button>
+            </nav>
+          </div>
+
+          <div class="sidebar-bottom">
+            <div class="user-badge-card">
+              <div class="user-avatar" id="admin-user-avatar">AD</div>
+              <div class="user-info">
+                <div class="user-name" id="admin-user-name">System Administrator</div>
+                <div class="user-role" id="admin-user-role">Administrator</div>
+              </div>
+            </div>
+            <button class="btn-sidebar-signout" onclick="handleLogout()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+              <span>Sign out</span>
+            </button>
+          </div>
+        </aside>
+
+        <!-- Main Dashboard Viewport -->
+        <main class="dashboard-main">
+          <!-- TAB 1: STUDENTS (Mockup 2) -->
+          <div id="tab-students" class="dash-tab active">
+            <div class="dash-header">
+              <div class="dash-title-group">
+                <h2>Students</h2>
+                <p id="students-count-label">3 enrolled</p>
+              </div>
+              <div class="dash-actions">
+                <button class="btn btn-primary" onclick="openAddStudentModal()">
+                  + Add Student
+                </button>
+                <button class="btn btn-outline" onclick="loadStudents()">
+                  Refresh
+                </button>
+              </div>
+            </div>
+
+            <!-- Students Table Card (Mockup 2 Table) -->
+            <div class="table-card">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>CODE</th>
+                      <th>NAME</th>
+                      <th>DEPARTMENT</th>
+                      <th class="text-right">ACTIONS</th>
+                    </tr>
+                  </thead>
+                  <tbody id="students-table-body">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: ATTENDANCE RECORDS (Mockup 3) -->
+          <div id="tab-attendance" class="dash-tab">
+            <div class="dash-header">
+              <div class="dash-title-group">
+                <h2>Attendance records</h2>
+                <p>Manage check-ins and check-outs</p>
+              </div>
+              <div class="dash-actions">
+                <input type="date" id="attendance-date-filter" class="form-input form-input-sm" onchange="loadAttendance()">
+                <button class="btn btn-outline" onclick="loadAttendance()">Refresh</button>
+              </div>
+            </div>
+
+            <!-- Quick Action Card (Mockup 3 Quick Action) -->
+            <div class="action-card">
+              <h4 class="card-title">Record Attendance</h4>
+              <div class="record-form-row">
+                <div class="input-with-button">
+                  <input type="text" id="attendance-code-input" class="form-input" placeholder="Enter student code e.g. CS2024-001">
+                </div>
+                <button class="btn btn-teal" onclick="handleAttendanceAction('check-in')">Check In</button>
+                <button class="btn btn-primary" onclick="handleAttendanceAction('check-out')">Check Out</button>
+              </div>
+
+              <!-- Green Success Feedback Banner (Mockup 3 Feedback) -->
+              <div id="attendance-feedback-banner" class="success-banner hidden">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span id="attendance-feedback-text">Check-in recorded for Aarav Sharma (CS2024-001)</span>
+              </div>
+            </div>
+
+            <!-- Attendance Records Table (Mockup 3 Table) -->
+            <div class="table-card">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>STUDENT CODE</th>
+                      <th>NAME</th>
+                      <th>DATE</th>
+                      <th>TIME IN</th>
+                      <th>TIME OUT</th>
+                      <th>STATUS</th>
+                    </tr>
+                  </thead>
+                  <tbody id="attendance-table-body">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: ACTIVE SESSIONS (Single-Device Management) -->
+          <div id="tab-sessions" class="dash-tab">
+            <div class="dash-header">
+              <div class="dash-title-group">
+                <h2>Active Student Sessions</h2>
+                <p>Single-device enforcement policy · Terminate session to unlock login on another device</p>
+              </div>
+              <div class="dash-actions">
+                <button class="btn btn-outline" onclick="loadActiveSessions()">Refresh Sessions</button>
+              </div>
+            </div>
+
+            <div class="table-card">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>STUDENT</th>
+                      <th>CODE</th>
+                      <th>DEPARTMENT</th>
+                      <th>ACTIVE SESSION ID</th>
+                      <th>LOGIN TIME</th>
+                      <th class="text-right">DEVICE ACTION</th>
+                    </tr>
+                  </thead>
+                  <tbody id="sessions-table-body">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 4: TIMETABLE & VERIFICATION ROSTER -->
+          <div id="tab-timetable" class="dash-tab">
+            <div class="dash-header">
+              <div class="dash-title-group">
+                <h2>Lecture Timetables &amp; Real-time Verification</h2>
+                <p>9:00 AM class scheduled with 9:05 AM in-person verification window</p>
+              </div>
+              <div class="dash-actions">
+                <select id="timetable-dept-filter" class="form-select" onchange="loadAdminTimetable()">
+                  <option value="Computer Science & Engineering">Computer Science &amp; Engineering</option>
+                  <option value="Information Technology">Information Technology</option>
+                  <option value="Artificial Intelligence & Data Science">Artificial Intelligence &amp; Data Science</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-card">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>DAY</th>
+                      <th>SUBJECT</th>
+                      <th>FACULTY</th>
+                      <th>TIME</th>
+                      <th>VERIFY WINDOW</th>
+                      <th>ROOM</th>
+                      <th>BRANCH</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-timetable-body">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         MODAL 1: STUDENT LIVE CAMERA VERIFICATION (Mockup 7)
+         ========================================== -->
+    <div id="modal-camera-verification" class="modal-backdrop">
+      <div class="modal-dialog verification-dialog">
+        <div class="verification-header">
+          <button type="button" class="btn-back" onclick="closeLiveVerificationModal()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span>Back</span>
+          </button>
+          <h2>Verify attendance</h2>
+          <p id="modal-lecture-meta">Data Structures · started 09:00 AM</p>
+        </div>
+
+        <div class="verification-body">
+          <!-- Dark Navy Camera Feed Container with Oval Guide (Mockup 7) -->
+          <div class="camera-feed-card">
+            <video id="webcam-video" autoplay playsinline muted></video>
+            <canvas id="snapshot-canvas" style="display:none;"></canvas>
+
+            <!-- Oval Guide & Scanner Line Overlay -->
+            <div class="facial-oval-overlay">
+              <div class="oval-guide">
+                <div class="scan-beam"></div>
+              </div>
+              <div class="reticle corner-tl"></div>
+              <div class="reticle corner-tr"></div>
+              <div class="reticle corner-bl"></div>
+              <div class="reticle corner-br"></div>
+              <div class="feed-status-badge" id="camera-badge-text">● Live Camera Feed</div>
+            </div>
+          </div>
+
+          <!-- Permissions Checklist White Card (Mockup 7) -->
+          <div class="permissions-card">
+            <label class="perm-item">
+              <input type="checkbox" id="perm-camera" checked>
+              <span class="checkbox-custom"></span>
+              <span class="perm-label">Camera access enabled</span>
+            </label>
+
+            <label class="perm-item">
+              <input type="checkbox" id="perm-face" checked>
+              <span class="checkbox-custom"></span>
+              <span class="perm-label">Live facial oval guide aligned</span>
+            </label>
+
+            <div class="geofence-badge-row">
+              <span class="geofence-status-pill">
+                <span class="green-dot"></span>
+                Location: inside campus (LT-102 geofence)
+              </span>
+            </div>
+          </div>
+
+          <!-- Capture & Verify CTA Button (Mockup 7) -->
+          <button id="btn-capture-verify" class="btn btn-primary btn-block btn-lg" onclick="executeLiveVerification()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            <span>Capture &amp; Verify</span>
+          </button>
+
+          <!-- Privacy Footnote (Mockup 7 Bottom) -->
+          <p class="privacy-footnote">
+            Photos are strictly temporary and verified in-memory. No photo is saved to disk storage.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         MODAL 2: SINGLE-DEVICE BLOCK DIALOG (Mockup 5)
+         ========================================== -->
+    <div id="modal-single-device-block" class="modal-backdrop">
+      <div class="modal-dialog alert-dialog">
+        <div class="dialog-icon-wrapper danger-light">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        </div>
+        <h3 class="dialog-title">Already signed in on another device</h3>
+        <p id="single-device-dialog-message" class="dialog-message">
+          Your student account is currently active on device <strong>SES-882A</strong>. Multiple logins on another device or window are strictly blocked under single-device security policy. Contact your admin if this wasn't you.
+        </p>
+        <div class="dialog-actions-row">
+          <button type="button" class="btn btn-outline" onclick="contactAdminAlert()">Contact Admin</button>
+          <button type="button" class="btn btn-primary" onclick="closeSingleDeviceModal()">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         MODAL 3: DELETE STUDENT CONFIRMATION (Mockup 4)
+         ========================================== -->
+    <div id="modal-delete-student" class="modal-backdrop">
+      <div class="modal-dialog alert-dialog">
+        <div class="dialog-icon-wrapper danger-light">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        </div>
+        <h3 class="dialog-title">Delete this student?</h3>
+        <p id="delete-student-prompt" class="dialog-message">
+          This action cannot be undone. All attendance logs and records associated with this student will be permanently removed.
+        </p>
+        <div class="dialog-actions-row">
+          <button type="button" class="btn btn-outline" onclick="closeDeleteStudentModal()">Cancel</button>
+          <button type="button" id="btn-confirm-delete-student" class="btn btn-danger">Delete Student</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         MODAL 4: ADD / EDIT STUDENT MODAL
+         ========================================== -->
+    <div id="modal-add-student" class="modal-backdrop">
+      <div class="modal-dialog form-dialog">
+        <div class="modal-header">
+          <h3 id="student-modal-title">Add New Student</h3>
+          <button class="btn-close" onclick="closeAddStudentModal()">&times;</button>
+        </div>
+        <form id="student-form" onsubmit="handleSaveStudent(event)">
+          <input type="hidden" id="student-form-id">
+          <div class="form-group">
+            <label for="student-form-code">Student Code / Roll Number</label>
+            <input type="text" id="student-form-code" class="form-input" placeholder="e.g. CS2024-003" required>
+          </div>
+          <div class="form-group">
+            <label for="student-form-name">Full Name</label>
+            <input type="text" id="student-form-name" class="form-input" placeholder="e.g. Priya Sharma" required>
+          </div>
+          <div class="form-group">
+            <label for="student-form-dept">Department</label>
+            <select id="student-form-dept" class="form-select" required>
+              <option value="Computer Science & Engineering">Computer Science &amp; Engineering</option>
+              <option value="Information Technology">Information Technology</option>
+              <option value="Artificial Intelligence & Data Science">Artificial Intelligence &amp; Data Science</option>
+              <option value="Electronics & Communication">Electronics &amp; Communication</option>
+            </select>
+          </div>
+          <div class="dialog-actions-row">
+            <button type="button" class="btn btn-outline" onclick="closeAddStudentModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Student</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
