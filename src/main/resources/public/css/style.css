@@ -637,6 +637,7 @@ body {
   gap: 12px;
 }
 
+.lecture-card,
 .lecture-card-desktop {
   background: var(--card-bg);
   border: 1px solid var(--border-subtle);
@@ -645,21 +646,90 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-fast);
 }
 
+.lecture-card:hover,
 .lecture-card-desktop:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
   border-color: #CBD5E1;
 }
 
+.lecture-card.verified {
+  border-left: 4px solid var(--success);
+  background: #FAFCFF;
+}
+
+.lecture-card.active {
+  border-left: 4px solid var(--primary-blue);
+}
+
+.lecture-time {
+  display: flex;
+  flex-direction: column;
+  min-width: 90px;
+}
+
+.time-main {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--primary-navy);
+}
+
+.time-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.lecture-details {
+  flex: 1;
+}
+
+.lecture-title,
 .lecture-desktop-left h4 {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   margin-bottom: 4px;
   color: var(--text-dark);
+}
+
+.lecture-meta,
+.lecture-desktop-meta {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.window-pill {
+  background: #FEF3C7;
+  color: #92400E;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.lecture-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.lecture-badge.badge-verified {
+  background: #DCFCE7;
+  color: #166534;
+  border: 1px solid #BBF7D0;
 }
 
 .lecture-desktop-meta {
@@ -1458,25 +1528,354 @@ body {
   to { transform: translateY(0); opacity: 1; }
 }
 
-/* Responsive adjustments */
+/* ==========================================================================
+   MOBILE & TABLET RESPONSIVE STYLES (Mockups & Phone View Optimization)
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .student-grid-content {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+}
+
 @media (max-width: 768px) {
+  /* 1. Login View */
   .login-wrapper {
     flex-direction: column;
+    min-height: auto;
   }
   .login-hero-panel {
-    padding: 32px 24px;
+    padding: 32px 20px 24px 20px;
   }
   .login-form-panel {
-    padding: 32px 24px;
+    padding: 28px 20px;
   }
+  .hero-quote-card {
+    display: none;
+  }
+
+  /* 2. Student Portal Navigation */
+  .student-top-navbar {
+    padding: 12px 14px;
+    flex-wrap: wrap;
+    gap: 10px;
+    height: auto;
+  }
+  .navbar-brand-group {
+    gap: 8px;
+  }
+  .brand-title {
+    font-size: 16px;
+  }
+  .portal-badge {
+    display: none;
+  }
+  .campus-clock-pill {
+    display: none;
+  }
+  .navbar-right-group {
+    gap: 8px;
+    margin-left: auto;
+  }
+  .student-profile-chip {
+    padding: 4px 8px 4px 4px;
+  }
+  .chip-meta {
+    display: none;
+  }
+  .chip-name {
+    font-size: 12px;
+  }
+  .btn-logout-navbar {
+    padding: 0 10px !important;
+    font-size: 12px !important;
+    height: 32px !important;
+  }
+
+  /* 3. Student Main Content & Hero Card */
+  .student-desktop-main {
+    padding: 16px 12px 36px 12px;
+    max-width: 100%;
+  }
+
+  .hero-lecture-card-desktop {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 20px 16px;
+    gap: 16px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+  }
+  .hero-card-left {
+    width: 100%;
+  }
+  .hero-subject-title {
+    font-size: 20px;
+    line-height: 1.3;
+    margin-bottom: 6px;
+    word-break: break-word;
+  }
+  .hero-details-line {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+  .hero-tags-row {
+    gap: 6px;
+  }
+  .hero-tag {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+  .hero-card-right {
+    width: 100%;
+  }
+  .btn-hero-white-lg {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 18px;
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+
+  /* 4. Student Timetable Grid & Cards */
+  .student-grid-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 20px;
+  }
+  .student-schedule-column,
+  .student-side-column {
+    width: 100%;
+  }
+
+  .section-header-row {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .section-title-wrap h3 {
+    font-size: 16px;
+  }
+  .counter-badge-lg {
+    font-size: 11px;
+    padding: 4px 10px;
+    white-space: nowrap;
+  }
+
+  .lecture-card,
+  .lecture-card-desktop {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 14px;
+  }
+  .lecture-time {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 1px dashed var(--border-subtle);
+    padding-bottom: 8px;
+    width: 100%;
+    min-width: unset;
+  }
+  .time-main {
+    font-size: 14.5px;
+  }
+  .time-sub {
+    font-size: 12px;
+  }
+  .lecture-details {
+    width: 100%;
+  }
+  .lecture-title {
+    font-size: 14.5px;
+  }
+  .lecture-meta {
+    font-size: 12px;
+    gap: 8px;
+  }
+  .lecture-action {
+    width: 100%;
+    margin-top: 4px;
+  }
+  .lecture-action .btn,
+  .lecture-action .lecture-badge {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  /* 5. Side Cards */
+  .side-card {
+    padding: 16px;
+    border-radius: 14px;
+    margin-bottom: 14px;
+  }
+  .side-card-title {
+    font-size: 14px;
+  }
+  .stat-mini-grid {
+    gap: 8px;
+  }
+  .stat-mini-num {
+    font-size: 20px;
+  }
+
+  /* 6. Admin / Faculty Dashboard on Mobile */
   .dashboard-layout {
     flex-direction: column;
   }
   .dashboard-sidebar {
     width: 100%;
+    padding: 14px 14px 10px 14px;
   }
+  .sidebar-top {
+    width: 100%;
+  }
+  .sidebar-nav {
+    margin-top: 12px;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 6px;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .sidebar-nav::-webkit-scrollbar {
+    display: none;
+  }
+  .nav-item {
+    width: auto;
+    flex-shrink: 0;
+    padding: 8px 12px;
+    font-size: 12.5px;
+    white-space: nowrap;
+    border-radius: var(--radius-full);
+  }
+  .sidebar-bottom {
+    margin-top: 8px;
+    padding-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .user-badge-card {
+    margin-bottom: 0;
+  }
+  .user-meta .user-role {
+    font-size: 11px;
+  }
+  .btn-sidebar-signout {
+    width: auto;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
   .dashboard-main {
-    padding: 20px;
+    padding: 14px 12px 28px 12px;
+    width: 100%;
+  }
+  .dash-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .dash-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+  }
+  .dash-actions .btn,
+  .dash-actions input {
+    flex: 1 1 calc(50% - 6px);
+    justify-content: center;
+    padding: 8px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+    box-sizing: border-box;
+  }
+
+  .record-form-row {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+  .record-form-row .input-with-button {
+    width: 100%;
+  }
+  .record-form-row .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* 7. Tables on Mobile */
+  .table-card {
+    border-radius: 12px;
+    padding: 0;
+    overflow: hidden;
+  }
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+  }
+  .data-table {
+    min-width: 540px;
+    font-size: 12px;
+  }
+  .data-table th,
+  .data-table td {
+    padding: 10px 12px;
+    white-space: nowrap;
+  }
+
+  /* 8. Modals on Mobile */
+  .modal-dialog {
+    width: 95% !important;
+    max-width: 440px !important;
+    margin: 12px auto;
+    padding: 18px 16px !important;
+    border-radius: 18px;
+  }
+  .verification-dialog {
+    max-width: 420px !important;
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+  .camera-feed-card {
+    height: 220px;
+    border-radius: 14px;
+    margin-bottom: 14px;
+  }
+  .oval-guide {
+    width: 130px;
+    height: 175px;
+  }
+  .permissions-card {
+    padding: 12px;
+    margin-bottom: 14px;
+  }
+  .perm-item {
+    font-size: 12.5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .student-desktop-main {
+    padding: 12px 10px 24px 10px;
+  }
+  .hero-subject-title {
+    font-size: 18px;
+  }
+  .dash-actions .btn {
+    flex: 1 1 100%;
   }
 }
 

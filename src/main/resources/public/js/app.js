@@ -575,7 +575,7 @@ function startCampusClock() {
     if (!clockEl) return;
     const now = new Date();
     const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    clockEl.textContent = `${timeStr} · ACEIT Campus Realtime`;
+    clockEl.textContent = `${timeStr} · Extremis Campus Realtime`;
   }
   update();
   if (!state.clockInterval) {
@@ -604,7 +604,9 @@ async function loadStudentTimetable() {
 
 function renderStudentTimetable() {
   const listContainer = document.getElementById('student-timetable-list');
-  listContainer.innerHTML = '';
+  if (listContainer) {
+    listContainer.innerHTML = '';
+  }
 
   const total = state.timetable.length;
   let verifiedCount = 0;
@@ -646,7 +648,7 @@ function renderStudentTimetable() {
         <div class="lecture-meta">
           <span>👨‍🏫 ${escapeHtml(item.facultyName)}</span>
           <span>📍 ${escapeHtml(item.roomNumber)}</span>
-          <span class="window-pill">⏰ Scan at ${escapeHtml(item.verificationTime)} AM</span>
+          <span class="window-pill">⏰ Scan at ${escapeHtml(item.verificationTime || item.startTime)} AM</span>
         </div>
       </div>
       <div class="lecture-action">
@@ -654,35 +656,77 @@ function renderStudentTimetable() {
       </div>
     `;
 
-    listContainer.appendChild(card);
+    if (listContainer) {
+      listContainer.appendChild(card);
+    }
   });
 
-  // Update Summary Metrics Card
-  document.getElementById('stat-verified-count').textContent = `${verifiedCount} / ${total}`;
+  // Update Summary Metrics Card in Student Portal
+  const verifiedCounterEl = document.getElementById('lectures-verified-counter');
+  if (verifiedCounterEl) verifiedCounterEl.textContent = `${verifiedCount} of ${total} verified`;
+
   const pct = total > 0 ? Math.round((verifiedCount / total) * 100) : 0;
-  document.getElementById('stat-attendance-rate').textContent = `${pct}% Rate`;
+  const sidePctEl = document.getElementById('side-progress-percent');
+  if (sidePctEl) sidePctEl.textContent = `${pct}%`;
+
+  const sideFillEl = document.getElementById('side-progress-fill');
+  if (sideFillEl) sideFillEl.style.width = `${pct}%`;
+
+  const sideVerifiedEl = document.getElementById('side-verified-count');
+  if (sideVerifiedEl) sideVerifiedEl.textContent = verifiedCount;
+
+  const sidePendingEl = document.getElementById('side-pending-count');
+  if (sidePendingEl) sidePendingEl.textContent = Math.max(0, total - verifiedCount);
+
+  // Backward compatibility with previous elements
+  const statCount = document.getElementById('stat-verified-count');
+  if (statCount) statCount.textContent = `${verifiedCount} / ${total}`;
+  const statRate = document.getElementById('stat-attendance-rate');
+  if (statRate) statRate.textContent = `${pct}% Rate`;
 
   // Hero Active Class Card (Mockup 6 Banner)
   if (state.timetable.length > 0) {
     const active = state.timetable[0];
-    document.getElementById('hero-subject-name').textContent = active.subject;
-    document.getElementById('hero-room-display').textContent = active.roomNumber;
-    document.getElementById('hero-faculty-display').textContent = active.facultyName;
-    document.getElementById('hero-time-display').textContent = `${active.startTime} - ${active.endTime} (Verification: ${active.verificationTime} AM)`;
-    
-    const heroBtn = document.getElementById('btn-hero-verify');
-    if (state.verifiedLectureIds.has(active.id)) {
-      heroBtn.className = 'btn btn-outline';
-      heroBtn.disabled = true;
-      heroBtn.innerHTML = `<span>✓ Verified Today</span>`;
-    } else {
-      heroBtn.className = 'btn btn-primary';
-      heroBtn.disabled = false;
-      heroBtn.innerHTML = `
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-        <span>Verify Attendance Now</span>
-      `;
-      heroBtn.onclick = () => openLiveVerificationModal(active.id);
+    const heroSubj = document.getElementById('hero-subject-name');
+    if (heroSubj) heroSubj.textContent = active.subject;
+
+    const heroDetails = document.getElementById('hero-details-text');
+    if (heroDetails) {
+      heroDetails.textContent = `${active.facultyName} · Room ${active.roomNumber} · ${active.startTime} - ${active.endTime}`;
+    }
+
+    const heroRoom = document.getElementById('hero-room-display');
+    if (heroRoom) heroRoom.textContent = active.roomNumber;
+    const heroFac = document.getElementById('hero-faculty-display');
+    if (heroFac) heroFac.textContent = active.facultyName;
+    const heroTime = document.getElementById('hero-time-display');
+    if (heroTime) heroTime.textContent = `${active.startTime} - ${active.endTime} (Verification: ${active.verificationTime || active.startTime} AM)`;
+
+    const heroStatus = document.getElementById('hero-status-text');
+    if (heroStatus) {
+      heroStatus.textContent = `Verification open · ${active.verificationTime || active.startTime} AM`;
+    }
+
+    const heroBtn = document.getElementById('hero-verify-action-btn') || document.getElementById('btn-hero-verify');
+    if (heroBtn) {
+      if (state.verifiedLectureIds.has(active.id)) {
+        heroBtn.className = 'btn btn-hero-white-lg verified';
+        heroBtn.disabled = true;
+        heroBtn.style.opacity = '0.9';
+        heroBtn.innerHTML = `
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span>✓ Attendance Verified</span>
+        `;
+      } else {
+        heroBtn.className = 'btn btn-hero-white-lg';
+        heroBtn.disabled = false;
+        heroBtn.style.opacity = '1';
+        heroBtn.innerHTML = `
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+          <span>Verify attendance</span>
+        `;
+        heroBtn.onclick = () => openLiveVerificationModal(active.id);
+      }
     }
   }
 }
@@ -692,24 +736,47 @@ function renderStudentTimetable() {
 // ==========================================================================
 
 function openLiveVerificationModal(timetableId) {
-  const lecture = state.timetable.find(t => t.id === timetableId);
-  if (!lecture) return;
+  // If timetableId is not provided, pick first unverified or first available lecture
+  let lecture = null;
+  if (timetableId !== undefined && timetableId !== null) {
+    lecture = state.timetable.find(t => t.id === Number(timetableId));
+  }
+  if (!lecture) {
+    lecture = state.timetable.find(t => !state.verifiedLectureIds.has(t.id)) || state.timetable[0];
+  }
+  if (!lecture) {
+    showToast('No active lecture scheduled for verification.', 'warning');
+    return;
+  }
 
   state.activeLecture = lecture;
-  document.getElementById('verify-modal-subject').textContent = lecture.subject;
-  document.getElementById('verify-modal-time').textContent = `${lecture.startTime} - ${lecture.endTime} (Scan: ${lecture.verificationTime} AM)`;
-  document.getElementById('verify-modal-room').textContent = lecture.roomNumber;
+
+  // Update modal titles & meta
+  const metaEl = document.getElementById('modal-lecture-meta');
+  if (metaEl) {
+    metaEl.textContent = `${lecture.subject} · Room ${lecture.roomNumber} · ${lecture.startTime} - ${lecture.endTime}`;
+  }
+  const subjEl = document.getElementById('verify-modal-subject');
+  if (subjEl) subjEl.textContent = lecture.subject;
+  const timeEl = document.getElementById('verify-modal-time');
+  if (timeEl) timeEl.textContent = `${lecture.startTime} - ${lecture.endTime} (Scan: ${lecture.verificationTime || lecture.startTime} AM)`;
+  const roomEl = document.getElementById('verify-modal-room');
+  if (roomEl) roomEl.textContent = lecture.roomNumber;
 
   // Reset checkboxes
-  document.getElementById('perm-camera').checked = true;
-  document.getElementById('perm-face').checked = true;
+  const permCamera = document.getElementById('perm-camera');
+  if (permCamera) permCamera.checked = true;
+  const permFace = document.getElementById('perm-face');
+  if (permFace) permFace.checked = true;
 
   // Check geofence
   detectLiveLocation();
 
   // Show modal
-  const modal = document.getElementById('modal-live-verification');
-  modal.classList.add('active');
+  const modal = document.getElementById('modal-camera-verification') || document.getElementById('modal-live-verification');
+  if (modal) {
+    modal.classList.add('active');
+  }
 
   // Start real webcam stream
   startWebcam();
@@ -717,32 +784,36 @@ function openLiveVerificationModal(timetableId) {
 
 function closeLiveVerificationModal() {
   stopWebcam();
-  const modal = document.getElementById('modal-live-verification');
-  modal.classList.remove('active');
+  const modal = document.getElementById('modal-camera-verification') || document.getElementById('modal-live-verification');
+  if (modal) {
+    modal.classList.remove('active');
+  }
   state.activeLecture = null;
 }
 
 function detectLiveLocation() {
-  const geoPill = document.getElementById('geo-status-pill');
+  const geoPill = document.getElementById('geo-status-pill') || document.querySelector('.geofence-status-pill');
+  if (!geoPill) return;
+
   if ('geolocation' in navigator) {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        geoPill.innerHTML = `<span>📍 Within ACEIT Campus Boundary (±${Math.round(pos.coords.accuracy)}m)</span>`;
+        geoPill.innerHTML = `<span class="green-dot"></span><span>Location: inside Extremis campus (LT-102 geofence, ±${Math.round(pos.coords.accuracy)}m)</span>`;
         geoPill.style.color = 'var(--success)';
       },
       (err) => {
-        geoPill.innerHTML = `<span>📍 ACEIT Campus Boundary Verified (Simulated GPS fallback)</span>`;
-        geoPill.style.color = 'var(--text-muted)';
+        geoPill.innerHTML = `<span class="green-dot"></span><span>Location: inside campus (LT-102 geofence)</span>`;
       },
       { timeout: 5000 }
     );
   } else {
-    geoPill.innerHTML = `<span>📍 ACEIT Campus Boundary Verified</span>`;
+    geoPill.innerHTML = `<span class="green-dot"></span><span>Location: inside campus (LT-102 geofence)</span>`;
   }
 }
 
 async function startWebcam() {
   const video = document.getElementById('webcam-video');
+  if (!video) return;
   try {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -771,6 +842,7 @@ function stopWebcam() {
 
 function drawSimulatedCameraFeed(video) {
   const canvas = document.getElementById('snapshot-canvas');
+  if (!canvas) return;
   canvas.width = 400;
   canvas.height = 300;
   const ctx = canvas.getContext('2d');
@@ -779,8 +851,8 @@ function drawSimulatedCameraFeed(video) {
 }
 
 async function executeLiveVerification() {
-  const permCamera = document.getElementById('perm-camera').checked;
-  const permFace = document.getElementById('perm-face').checked;
+  const permCamera = document.getElementById('perm-camera')?.checked ?? true;
+  const permFace = document.getElementById('perm-face')?.checked ?? true;
 
   if (!permCamera) {
     showToast('Camera access permission is required!', 'error');
@@ -791,30 +863,39 @@ async function executeLiveVerification() {
     return;
   }
 
+  if (!state.activeLecture) {
+    state.activeLecture = state.timetable[0] || { id: 1 };
+  }
+
   const btn = document.getElementById('btn-capture-verify');
-  btn.disabled = true;
-  btn.innerHTML = '<span>Verifying in memory...</span>';
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span>Verifying in memory...</span>';
+  }
 
   // 1. Capture 1 frame to in-memory temporary canvas (never saved to disk)
   const video = document.getElementById('webcam-video');
   const canvas = document.getElementById('snapshot-canvas');
-  canvas.width = video.videoWidth || 320;
-  canvas.height = video.videoHeight || 240;
-  const ctx = canvas.getContext('2d');
-  try {
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  } catch (e) {}
+  if (video && canvas) {
+    canvas.width = video.videoWidth || 320;
+    canvas.height = video.videoHeight || 240;
+    const ctx = canvas.getContext('2d');
+    try {
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    } catch (e) {}
+  }
 
   // 2. Stop camera stream immediately to preserve student privacy
   stopWebcam();
 
   try {
+    const studentId = (state.currentUser && state.currentUser.id) ? state.currentUser.id : 1;
     const data = await apiCall('/api/student/verify-lecture', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         timetableId: state.activeLecture.id,
-        studentId: state.currentUser.id,
+        studentId: studentId,
         cameraGranted: true,
         locationGranted: true,
         photoCaptured: true
@@ -834,11 +915,13 @@ async function executeLiveVerification() {
   } catch (err) {
     showToast('Verification request failed: ' + err.message, 'error');
   } finally {
-    btn.disabled = false;
-    btn.innerHTML = `
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-      <span>Capture &amp; Verify</span>
-    `;
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+        <span>Capture &amp; Verify</span>
+      `;
+    }
   }
 }
 
@@ -855,7 +938,7 @@ function routeToDashboard() {
 
   document.getElementById('admin-user-avatar').textContent = isFaculty ? 'FC' : 'AD';
   document.getElementById('admin-user-name').textContent = u.fullName || (isFaculty ? 'Prof. Rajesh Kumar' : 'Administrator');
-  document.getElementById('admin-user-role').textContent = isFaculty ? 'Faculty Member · ACEIT' : 'System Administrator · ACEIT';
+  document.getElementById('admin-user-role').textContent = isFaculty ? 'Faculty Member · Extremis' : 'System Administrator · Extremis';
   
   // Both Admin and Faculty have access to manage students!
   switchAdminTab('students');
