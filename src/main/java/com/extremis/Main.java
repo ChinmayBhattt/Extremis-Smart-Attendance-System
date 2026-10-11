@@ -110,13 +110,20 @@ public class Main {
             }
 
             // Seed Users for all Roles
-            if (userDao.getUserByUsername("24EARCS001") == null) {
+            if (userDao.getUserByUsername("admin") == null) {
                 userDao.addUser(new User(0, "admin", "admin123", "ADMIN", "System Administrator", "Extremis Administration", null, null, null));
+            }
+            if (userDao.getUserByUsername("faculty.rajesh") == null) {
                 userDao.addUser(new User(0, "faculty.rajesh", "faculty123", "FACULTY", "Prof. Rajesh Kumar", "Computer Science & Engineering", null, null, null));
+            }
+            if (userDao.getUserByUsername("24EARCS001") == null) {
                 userDao.addUser(new User(0, "24EARCS001", "student123", "STUDENT", "Aarav Sharma", "Computer Science & Engineering", "24EARCS001", null, null));
+            }
+            if (userDao.getUserByUsername("24EARAD001") == null) {
                 userDao.addUser(new User(0, "24EARAD001", "student123", "STUDENT", "Priya Rathore", "Artificial Intelligence & Data Science", "24EARAD001", null, null));
+            }
+            if (userDao.getUserByUsername("24EARIT001") == null) {
                 userDao.addUser(new User(0, "24EARIT001", "student123", "STUDENT", "Rohan Verma", "Information Technology", "24EARIT001", null, null));
-                System.out.println("✓ Extremis users seeded.");
             }
 
             // Seed Branch Timetables matching Mockup 6
