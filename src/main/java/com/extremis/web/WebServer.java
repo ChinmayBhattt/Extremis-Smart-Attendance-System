@@ -1,5 +1,6 @@
 package com.extremis.web;
 
+import com.extremis.database.DatabaseManager;
 import com.extremis.model.Attendance;
 import com.extremis.model.Student;
 import com.extremis.model.TimeTableEntry;
@@ -22,14 +23,20 @@ import java.util.*;
 public class WebServer {
     private final AttendanceService attendanceService;
     private final AuthService authService;
+    private final DatabaseManager dbManager;
     private final int port;
     private Javalin app;
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    public WebServer(AttendanceService attendanceService, AuthService authService, int port) {
+    public WebServer(AttendanceService attendanceService, AuthService authService, DatabaseManager dbManager, int port) {
         this.attendanceService = attendanceService;
         this.authService = authService;
+        this.dbManager = dbManager;
         this.port = port;
+    }
+
+    public WebServer(AttendanceService attendanceService, AuthService authService, int port) {
+        this(attendanceService, authService, new DatabaseManager(), port);
     }
 
     public void start() {
@@ -315,6 +322,26 @@ public class WebServer {
                     "activeSessions", activeSessions,
                     "todayDate", today
             ));
+        });
+
+        // ==================== DATABASE EXPLORER ====================
+        app.get("/api/database/info", ctx -> {
+            ctx.json(Map.of(
+                    "type", dbManager.getDatabaseType(),
+                    "url", dbManager.getSanitizedDbUrl(),
+                    "tables", List.of("students", "attendance", "users", "timetable", "lecture_attendance")
+            ));
+        });
+
+        app.get("/api/database/inspect", ctx -> {
+            String table = ctx.queryParam("table");
+            if (table == null || table.isEmpty()) table = "students";
+            try {
+                Map<String, Object> data = dbManager.inspectTable(table);
+                ctx.json(data);
+            } catch (Exception e) {
+                ctx.status(400).json(Map.of("error", e.getMessage()));
+            }
         });
     }
 }

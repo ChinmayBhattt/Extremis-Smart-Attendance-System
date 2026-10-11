@@ -254,6 +254,10 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                 <span>Timetable &amp; Verification</span>
               </button>
+              <button class="nav-item" data-tab="database" id="nav-database-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                <span>Database Viewer</span>
+              </button>
             </nav>
           </div>
 
@@ -431,6 +435,53 @@
                   </thead>
                   <tbody id="admin-timetable-body">
                     <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 5: DATABASE VIEWER & LIVE SQL INSPECTOR -->
+          <div id="tab-database" class="dash-tab">
+            <div class="dash-header">
+              <div class="dash-title-group">
+                <h2>Database Viewer &amp; Table Inspector</h2>
+                <p>Real-time PostgreSQL / SQLite tables and records</p>
+              </div>
+              <div class="dash-actions">
+                <div class="badge badge-verified" id="db-engine-badge" style="font-size:12px; padding:6px 14px;">
+                  <span class="pulse-dot"></span>
+                  <span id="db-engine-label">PostgreSQL</span>
+                </div>
+                <select id="db-table-select" class="form-select form-input-sm" style="width: 200px;" onchange="loadDatabaseTableData()">
+                  <option value="students">students</option>
+                  <option value="attendance">attendance</option>
+                  <option value="users">users</option>
+                  <option value="timetable">timetable</option>
+                  <option value="lecture_attendance">lecture_attendance</option>
+                </select>
+                <button class="btn btn-outline" onclick="loadDatabaseTableData()">Refresh</button>
+              </div>
+            </div>
+
+            <div class="action-card" style="margin-bottom: 20px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                <div>
+                  <h4 class="card-title" style="margin-bottom:4px;">Connected Database</h4>
+                  <p style="font-size:13px; font-family:var(--font-mono); color:var(--text-muted);" id="db-url-display">Checking...</p>
+                </div>
+                <button class="btn btn-outline btn-sm" onclick="exportCurrentTableCSV()">Download CSV</button>
+              </div>
+            </div>
+
+            <div class="table-card">
+              <div class="table-responsive">
+                <table class="data-table" id="db-viewer-table">
+                  <thead id="db-viewer-thead">
+                    <!-- Dynamic column headers -->
+                  </thead>
+                  <tbody id="db-viewer-tbody">
+                    <!-- Dynamic rows -->
                   </tbody>
                 </table>
               </div>

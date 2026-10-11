@@ -58,7 +58,7 @@ public class Main {
         // Start Embedded Web Server
         int webPort = 8080;
         try {
-            com.extremis.web.WebServer webServer = new com.extremis.web.WebServer(attendanceService, authService, webPort);
+            com.extremis.web.WebServer webServer = new com.extremis.web.WebServer(attendanceService, authService, dbManager, webPort);
             webServer.start();
 
             // Try to open browser automatically
