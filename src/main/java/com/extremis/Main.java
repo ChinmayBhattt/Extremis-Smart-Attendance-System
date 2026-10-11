@@ -98,40 +98,38 @@ public class Main {
 
     private static void seedDataIfEmpty(AttendanceService service, UserDao userDao, TimeTableDao timeTableDao) {
         try {
-            // Seed Students matching Figma Mockups
-            if (service.getAllStudents().isEmpty() || service.getStudentByCode("CS2024-001") == null) {
-                if (service.getStudentByCode("CS2024-001") == null) {
-                    service.registerStudent("CS2024-001", "Aarav Sharma", "Computer Science");
-                    service.registerStudent("CS2024-002", "Riya Verma", "Computer Science");
-                    service.registerStudent("EC2024-014", "Kabir Singh", "Electronics");
-                    service.registerStudent("ME2024-007", "Ananya Gupta", "Mechanical");
-                    service.registerStudent("CS2024-015", "Rohan Joshi", "Information Technology");
-                    service.registerStudent("CV2024-021", "Meera Nair", "Civil");
-                    System.out.println("✓ Figma mockup students seeded.");
-                }
+            // Seed Students matching Arya College of Engineering and IT
+            if (service.getStudentByCode("24EARCS001") == null) {
+                service.registerStudent("24EARCS001", "Aarav Sharma", "Computer Science & Engineering", "aarav.24earcs001@aryacollege.in", "A");
+                service.registerStudent("24EARCS002", "Sneha Agarwal", "Computer Science & Engineering", "sneha.24earcs002@aryacollege.in", "A");
+                service.registerStudent("24EARAD001", "Priya Rathore", "Artificial Intelligence & Data Science", "priya.24earad001@aryacollege.in", "A");
+                service.registerStudent("24EARAD002", "Devendra Singh", "Artificial Intelligence & Data Science", "devendra.24earad002@aryacollege.in", "B");
+                service.registerStudent("24EARIT001", "Rohan Verma", "Information Technology", "rohan.24earit001@aryacollege.in", "B");
+                service.registerStudent("24EARIT002", "Anjali Meena", "Information Technology", "anjali.24earit002@aryacollege.in", "A");
+                System.out.println("✓ Arya College of Engineering & IT students seeded.");
             }
 
-            // Seed Users for all 3 Roles
-            if (userDao.getUserByUsername("CS2024-001") == null) {
-                userDao.addUser(new User(0, "admin", "admin123", "ADMIN", "System Administrator", "Central Administration", null, null, null));
-                userDao.addUser(new User(0, "faculty.rajesh", "faculty123", "FACULTY", "Prof. A. Mehta", "Computer Science", null, null, null));
-                userDao.addUser(new User(0, "CS2024-001", "student123", "STUDENT", "Aarav Sharma", "Computer Science", "CS2024-001", null, null));
-                userDao.addUser(new User(0, "CS2024-002", "student123", "STUDENT", "Riya Verma", "Computer Science", "CS2024-002", null, null));
-                userDao.addUser(new User(0, "EC2024-014", "student123", "STUDENT", "Kabir Singh", "Electronics", "EC2024-014", null, null));
-                System.out.println("✓ Figma mockup users seeded.");
+            // Seed Users for all Roles
+            if (userDao.getUserByUsername("24EARCS001") == null) {
+                userDao.addUser(new User(0, "admin", "admin123", "ADMIN", "System Administrator", "Arya Central Administration", null, null, null));
+                userDao.addUser(new User(0, "faculty.rajesh", "faculty123", "FACULTY", "Prof. Rajesh Kumar", "Computer Science & Engineering", null, null, null));
+                userDao.addUser(new User(0, "24EARCS001", "student123", "STUDENT", "Aarav Sharma", "Computer Science & Engineering", "24EARCS001", null, null));
+                userDao.addUser(new User(0, "24EARAD001", "student123", "STUDENT", "Priya Rathore", "Artificial Intelligence & Data Science", "24EARAD001", null, null));
+                userDao.addUser(new User(0, "24EARIT001", "student123", "STUDENT", "Rohan Verma", "Information Technology", "24EARIT001", null, null));
+                System.out.println("✓ Arya College of Engineering & IT users seeded.");
             }
 
             // Seed Branch Timetables matching Mockup 6
-            if (timeTableDao.getTimeTableByDepartment("Computer Science").isEmpty()) {
-                timeTableDao.addEntry(new TimeTableEntry(0, "Computer Science", "Monday",
-                        "Data Structures", "Prof. A. Mehta", "09:00", "10:00", "09:05", "Room 204"));
-                timeTableDao.addEntry(new TimeTableEntry(0, "Computer Science", "Monday",
-                        "DBMS", "Prof. S. Kapoor", "10:00", "11:00", "10:05", "Room 205"));
-                timeTableDao.addEntry(new TimeTableEntry(0, "Computer Science", "Monday",
-                        "Java Programming", "Prof. N. Rao", "11:15", "12:15", "11:20", "Lab 2"));
-                timeTableDao.addEntry(new TimeTableEntry(0, "Computer Science", "Monday",
-                        "Mathematics III", "Prof. V. Iyer", "01:00", "02:00", "01:05", "Room 101"));
-                System.out.println("✓ Figma mockup timetable seeded.");
+            if (timeTableDao.getTimeTableByDepartment("Computer Science & Engineering").isEmpty()) {
+                timeTableDao.addEntry(new TimeTableEntry(0, "Computer Science & Engineering", "Monday",
+                        "Data Structures & Algorithms", "Prof. Rajesh Kumar", "09:00", "10:00", "09:05", "LT-102"));
+                timeTableDao.addEntry(new TimeTableEntry(0, "Computer Science & Engineering", "Monday",
+                        "Database Management Systems", "Dr. Priya Nair", "10:00", "11:00", "10:05", "Lab 3B"));
+                timeTableDao.addEntry(new TimeTableEntry(0, "Computer Science & Engineering", "Monday",
+                        "Object Oriented Java", "Prof. Vikram Sen", "11:15", "12:15", "11:20", "Lab 2A"));
+                timeTableDao.addEntry(new TimeTableEntry(0, "Computer Science & Engineering", "Monday",
+                        "Discrete Mathematics", "Dr. Ananya Bose", "01:00", "02:00", "01:05", "Room 304"));
+                System.out.println("✓ Arya College timetable seeded.");
             }
         } catch (Exception e) {
             System.err.println("Notice: Seeding skipped: " + e.getMessage());

@@ -42,17 +42,25 @@ public class AttendanceService {
 
     // ==================== STUDENT CRUD ====================
     public Student registerStudent(String code, String name, String department) throws SQLException {
+        return registerStudent(code, name, department, "", "A");
+    }
+
+    public Student registerStudent(String code, String name, String department, String email, String section) throws SQLException {
         validateStudentFields(code, name, department);
 
         if (studentDao.studentCodeExists(code.trim(), null)) {
             throw new ValidationException("A student with code '" + code.trim() + "' already exists.");
         }
 
-        Student student = new Student(code.trim(), name.trim(), department.trim());
+        Student student = new Student(0, code.trim(), name.trim(), department.trim(), email, section);
         return studentDao.addStudent(student);
     }
 
     public void updateStudent(int id, String code, String name, String department) throws SQLException {
+        updateStudent(id, code, name, department, "", "A");
+    }
+
+    public void updateStudent(int id, String code, String name, String department, String email, String section) throws SQLException {
         Student existing = studentDao.getStudentById(id);
         if (existing == null) {
             throw new ValidationException("Student with ID " + id + " does not exist.");
@@ -67,6 +75,8 @@ public class AttendanceService {
         existing.setCode(code.trim());
         existing.setName(name.trim());
         existing.setDepartment(department.trim());
+        existing.setEmail(email != null ? email.trim() : "");
+        existing.setSection(section != null ? section.trim() : "A");
 
         studentDao.updateStudent(existing);
     }

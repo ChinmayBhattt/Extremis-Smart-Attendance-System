@@ -1,7 +1,8 @@
 /**
- * Extremis Web Application
+ * Extremis Web Application — Arya College of Engineering & IT (ACEIT)
  * Modern frontend logic matching all 7 Figma mockups with real Web APIs
  * Includes dual-mode resilient API client (Native Java Backend + Cloud/Vercel Client Fallback)
+ * Includes Arya College student sheet parser & bulk upload functionality
  */
 
 // Application State
@@ -16,41 +17,42 @@ const state = {
   verifiedLectureIds: new Set(),
   activeLecture: null,
   webcamStream: null,
-  pendingDeleteStudentId: null
+  pendingDeleteStudentId: null,
+  parsedSheetStudents: []
 };
 
 // ==========================================================================
-// RESILIENT API CLIENT & CLIENT-SIDE PERSISTENCE (Vercel & Offline Fallback)
+// RESILIENT API CLIENT & ARYA COLLEGE DATA STORE (Vercel & Offline Fallback)
 // ==========================================================================
 
 const DEFAULT_MOCK_DATA = {
   students: [
-    { id: 1, code: 'CS2024-001', name: 'Aarav Sharma', department: 'Computer Science & Engineering', semester: 4 },
-    { id: 2, code: 'CS2024-002', name: 'Riya Verma', department: 'Computer Science & Engineering', semester: 4 },
-    { id: 3, code: 'CS2024-003', name: 'Kabir Mehta', department: 'Computer Science & Engineering', semester: 4 },
-    { id: 4, code: 'IT2024-010', name: 'Sneha Patil', department: 'Information Technology', semester: 4 },
-    { id: 5, code: 'EC2024-022', name: 'Rohan Deshmukh', department: 'Electronics & Communication', semester: 4 }
+    { id: 1, code: '24EARCS001', name: 'Aarav Sharma', department: 'Computer Science & Engineering', email: 'aarav.24earcs001@aryacollege.in', section: 'A' },
+    { id: 2, code: '24EARCS002', name: 'Sneha Agarwal', department: 'Computer Science & Engineering', email: 'sneha.24earcs002@aryacollege.in', section: 'A' },
+    { id: 3, code: '24EARAD001', name: 'Priya Rathore', department: 'Artificial Intelligence & Data Science', email: 'priya.24earad001@aryacollege.in', section: 'A' },
+    { id: 4, code: '24EARAD002', name: 'Devendra Singh', department: 'Artificial Intelligence & Data Science', email: 'devendra.24earad002@aryacollege.in', section: 'B' },
+    { id: 5, code: '24EARIT001', name: 'Rohan Verma', department: 'Information Technology', email: 'rohan.24earit001@aryacollege.in', section: 'B' },
+    { id: 6, code: '24EARIT002', name: 'Anjali Meena', department: 'Information Technology', email: 'anjali.24earit002@aryacollege.in', section: 'A' }
   ],
   timetable: [
-    { id: 1, subject: 'CS401 — Advanced Algorithms & Graph Theory', facultyName: 'Prof. Rajesh Kumar', startTime: '09:00', endTime: '10:00', verificationTime: '09:05', roomNumber: 'Room 402', department: 'Computer Science & Engineering', dayOfWeek: 'Monday' },
-    { id: 2, subject: 'CS402 — Cloud Computing & Distributed Systems', facultyName: 'Dr. Priya Nair', startTime: '10:15', endTime: '11:15', verificationTime: '10:20', roomNumber: 'Lab 3B', department: 'Computer Science & Engineering', dayOfWeek: 'Monday' },
-    { id: 3, subject: 'CS403 — Machine Learning & Deep Neural Nets', facultyName: 'Prof. Vikram Sen', startTime: '11:30', endTime: '12:30', verificationTime: '11:35', roomNumber: 'Room 405', department: 'Computer Science & Engineering', dayOfWeek: 'Monday' },
-    { id: 4, subject: 'CS404 — Software Engineering & DevSecOps', facultyName: 'Dr. Ananya Bose', startTime: '01:30', endTime: '02:30', verificationTime: '01:35', roomNumber: 'Room 401', department: 'Computer Science & Engineering', dayOfWeek: 'Monday' },
-    { id: 5, subject: 'CS405 — Cyber Security & Cryptography', facultyName: 'Prof. Amit Verma', startTime: '02:45', endTime: '03:45', verificationTime: '02:50', roomNumber: 'Lab 2A', department: 'Computer Science & Engineering', dayOfWeek: 'Monday' }
+    { id: 1, subject: 'CS401 — Data Structures & Algorithms', facultyName: 'Prof. Rajesh Kumar', startTime: '09:00', endTime: '10:00', verificationTime: '09:05', roomNumber: 'LT-102', department: 'Computer Science & Engineering', dayOfWeek: 'Monday' },
+    { id: 2, subject: 'CS402 — Database Management Systems', facultyName: 'Dr. Priya Nair', startTime: '10:15', endTime: '11:15', verificationTime: '10:20', roomNumber: 'Lab 3B', department: 'Computer Science & Engineering', dayOfWeek: 'Monday' },
+    { id: 3, subject: 'CS403 — Object Oriented Java', facultyName: 'Prof. Vikram Sen', startTime: '11:30', endTime: '12:30', verificationTime: '11:35', roomNumber: 'Lab 2A', department: 'Computer Science & Engineering', dayOfWeek: 'Monday' },
+    { id: 4, subject: 'CS404 — Discrete Mathematics', facultyName: 'Dr. Ananya Bose', startTime: '01:30', endTime: '02:30', verificationTime: '01:35', roomNumber: 'Room 304', department: 'Computer Science & Engineering', dayOfWeek: 'Monday' }
   ],
   attendance: [
-    { id: 1, studentCode: 'CS2024-001', studentName: 'Aarav Sharma', date: new Date().toISOString().slice(0, 10), checkIn: '08:58 AM', checkOut: '—' },
-    { id: 2, studentCode: 'CS2024-002', studentName: 'Riya Verma', date: new Date().toISOString().slice(0, 10), checkIn: '08:55 AM', checkOut: '03:50 PM' }
+    { id: 1, studentCode: '24EARCS001', studentName: 'Aarav Sharma', date: new Date().toISOString().slice(0, 10), checkIn: '08:58 AM', checkOut: '—' },
+    { id: 2, studentCode: '24EARAD001', studentName: 'Priya Rathore', date: new Date().toISOString().slice(0, 10), checkIn: '08:55 AM', checkOut: '03:50 PM' }
   ],
   sessions: [
-    { userId: 1, username: 'CS2024-001', fullName: 'Aarav Sharma', department: 'Computer Science & Engineering', studentCode: 'CS2024-001', sessionId: 'SES-001-ACTIVE', loginTime: '08:58:12 AM' }
+    { userId: 1, username: '24EARCS001', fullName: 'Aarav Sharma', department: 'Computer Science & Engineering', studentCode: '24EARCS001', sessionId: 'SES-001-ACTIVE', loginTime: '08:58:12 AM' }
   ],
   verifiedLectures: [1]
 };
 
 function getMockStore() {
   try {
-    const raw = localStorage.getItem('extremis_store_v1');
+    const raw = localStorage.getItem('extremis_arya_store_v2');
     if (raw) return JSON.parse(raw);
   } catch (e) {}
   saveMockStore(DEFAULT_MOCK_DATA);
@@ -59,7 +61,7 @@ function getMockStore() {
 
 function saveMockStore(data) {
   try {
-    localStorage.setItem('extremis_store_v1', JSON.stringify(data));
+    localStorage.setItem('extremis_arya_store_v2', JSON.stringify(data));
   } catch (e) {}
 }
 
@@ -103,10 +105,11 @@ function handleMockApi(endpoint, options = {}) {
     if (role === 'STUDENT') {
       const studentMatch = store.students.find(s => s.code.toLowerCase() === cleanUser.toLowerCase()) || {
         id: 1,
-        code: cleanUser || 'CS2024-001',
-        name: cleanUser.toUpperCase() === 'CS2024-002' ? 'Riya Verma' : (cleanUser.toUpperCase() === 'CS2024-001' ? 'Aarav Sharma' : cleanUser),
-        department: 'Computer Science & Engineering',
-        semester: 4
+        code: cleanUser || '24EARCS001',
+        name: cleanUser.toUpperCase() === '24EARCS002' ? 'Sneha Agarwal' : (cleanUser.toUpperCase() === '24EARAD001' ? 'Priya Rathore' : (cleanUser.toUpperCase() === '24EARIT001' ? 'Rohan Verma' : 'Aarav Sharma')),
+        department: cleanUser.toUpperCase().includes('AD') ? 'Artificial Intelligence & Data Science' : (cleanUser.toUpperCase().includes('IT') ? 'Information Technology' : 'Computer Science & Engineering'),
+        email: cleanUser.toLowerCase() + '@aryacollege.in',
+        section: 'A'
       };
 
       const sessId = 'SES-' + studentMatch.code + '-' + Date.now().toString(36).toUpperCase();
@@ -152,7 +155,7 @@ function handleMockApi(endpoint, options = {}) {
         user: {
           id: 999,
           username: cleanUser || 'admin',
-          fullName: 'Campus Administrator',
+          fullName: 'Arya System Administrator',
           role: 'ADMIN'
         }
       };
@@ -184,13 +187,12 @@ function handleMockApi(endpoint, options = {}) {
     if (!store.verifiedLectures.includes(tid)) {
       store.verifiedLectures.push(tid);
     }
-    // Record attendance
     const today = new Date().toISOString().slice(0, 10);
-    const existing = store.attendance.find(a => a.studentCode === 'CS2024-001' && a.date === today);
+    const existing = store.attendance.find(a => a.studentCode === '24EARCS001' && a.date === today);
     if (!existing) {
       store.attendance.unshift({
         id: store.attendance.length + 1,
-        studentCode: 'CS2024-001',
+        studentCode: '24EARCS001',
         studentName: 'Aarav Sharma',
         date: today,
         checkIn: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -205,28 +207,28 @@ function handleMockApi(endpoint, options = {}) {
   if (pathname === '/api/database/inspect') {
     const table = urlObj.searchParams.get('table') || 'students';
     const isVercel = window.location.hostname.includes('vercel.app');
-    const dbType = isVercel ? 'PostgreSQL (Cloud Active)' : 'PostgreSQL / SQLite';
-    const dbUrl = 'postgresql://extremis_user:••••••••@aws.pooler.supabase.com:5432/extremis_db';
+    const dbType = isVercel ? 'PostgreSQL (Cloud Database)' : 'PostgreSQL / SQLite';
+    const dbUrl = 'postgresql://arya_admin:••••••••@aws.pooler.supabase.com:5432/arya_extremis_db';
 
     if (table === 'students') {
       return {
         dbType,
         url: dbUrl,
-        columns: ['id', 'student_code', 'full_name', 'department', 'semester'],
-        rows: store.students.map(s => [s.id, s.code, s.name, s.department, s.semester || 4])
+        columns: ['id', 'enrollment_no', 'full_name', 'college_email', 'branch', 'section'],
+        rows: store.students.map(s => [s.id, s.code, s.name, s.email || (s.code.toLowerCase() + '@aryacollege.in'), s.department, s.section || 'A'])
       };
     } else if (table === 'attendance') {
       return {
         dbType,
         url: dbUrl,
-        columns: ['id', 'student_code', 'student_name', 'date', 'check_in', 'check_out'],
+        columns: ['id', 'enrollment_no', 'student_name', 'date', 'check_in', 'check_out'],
         rows: store.attendance.map(a => [a.id, a.studentCode, a.studentName, a.date, a.checkIn, a.checkOut || '—'])
       };
     } else if (table === 'sessions') {
       return {
         dbType,
         url: dbUrl,
-        columns: ['user_id', 'student_code', 'student_name', 'session_id', 'login_time'],
+        columns: ['user_id', 'enrollment_no', 'student_name', 'session_id', 'login_time'],
         rows: store.sessions.map(s => [s.userId, s.studentCode || s.username, s.fullName, s.sessionId, s.loginTime])
       };
     } else if (table === 'timetable') {
@@ -242,34 +244,65 @@ function handleMockApi(endpoint, options = {}) {
         url: dbUrl,
         columns: ['id', 'action', 'user_code', 'details', 'timestamp'],
         rows: [
-          [1, 'LOGIN_VERIFY', 'CS2024-001', 'Single-device verification passed', new Date().toLocaleTimeString()],
-          [2, 'FACE_SCAN_CHECK', 'CS2024-001', 'In-memory biometric match completed', new Date().toLocaleTimeString()]
+          [1, 'LOGIN_VERIFY', '24EARCS001', 'Single-device verification passed', new Date().toLocaleTimeString()],
+          [2, 'FACE_SCAN_CHECK', '24EARCS001', 'In-memory biometric match completed', new Date().toLocaleTimeString()]
         ]
       };
     }
   }
 
-  // 7. Students CRUD
+  // 7. Students CRUD & Bulk Import
   if (pathname === '/api/students' && method === 'GET') {
     return store.students;
+  }
+  if (pathname === '/api/students/bulk' && method === 'POST') {
+    const list = Array.isArray(body) ? body : (body.students || []);
+    let count = 0;
+    list.forEach(item => {
+      if (item.code && item.name) {
+        const cleanCode = item.code.trim().toUpperCase();
+        const existingIdx = store.students.findIndex(s => s.code.toUpperCase() === cleanCode);
+        if (existingIdx === -1) {
+          store.students.push({
+            id: (store.students[store.students.length - 1]?.id || 0) + 1,
+            code: cleanCode,
+            name: item.name.trim(),
+            department: item.department ? item.department.trim() : 'Computer Science & Engineering',
+            email: item.email ? item.email.trim() : `${cleanCode.toLowerCase()}@aryacollege.in`,
+            section: item.section ? item.section.trim().toUpperCase() : 'A'
+          });
+          count++;
+        }
+      }
+    });
+    saveMockStore(store);
+    return { success: true, importedCount: count, message: `Successfully imported ${count} Arya College students.` };
   }
   if (pathname === '/api/students' && method === 'POST') {
     const newStudent = {
       id: (store.students[store.students.length - 1]?.id || 0) + 1,
-      code: body.code,
+      code: body.code.toUpperCase(),
       name: body.name,
       department: body.department,
-      semester: 4
+      email: body.email || (body.code.toLowerCase() + '@aryacollege.in'),
+      section: body.section || 'A'
     };
     store.students.push(newStudent);
     saveMockStore(store);
-    return { success: true };
+    return { success: true, student: newStudent };
   }
   if (pathname.startsWith('/api/students/') && method === 'PUT') {
     const id = parseInt(pathname.split('/').pop());
     const idx = store.students.findIndex(s => s.id === id);
     if (idx !== -1) {
-      store.students[idx] = { ...store.students[idx], code: body.code, name: body.name, department: body.department };
+      store.students[idx] = {
+        ...store.students[idx],
+        code: body.code.toUpperCase(),
+        name: body.name,
+        department: body.department,
+        email: body.email || store.students[idx].email,
+        section: body.section || store.students[idx].section
+      };
       saveMockStore(store);
     }
     return { success: true };
@@ -294,14 +327,14 @@ function handleMockApi(endpoint, options = {}) {
     const name = student ? student.name : 'Student ' + body.studentCode;
     store.attendance.unshift({
       id: store.attendance.length + 1,
-      studentCode: body.studentCode,
+      studentCode: body.studentCode.toUpperCase(),
       studentName: name,
       date: new Date().toISOString().slice(0, 10),
       checkIn: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       checkOut: '—'
     });
     saveMockStore(store);
-    return { success: true, message: `Checked in successfully: ${name} (${body.studentCode})` };
+    return { success: true, message: `Checked in successfully: ${name} (${body.studentCode.toUpperCase()})` };
   }
   if (pathname === '/api/attendance/checkout' && method === 'POST') {
     const rec = store.attendance.find(a => a.studentCode.toLowerCase() === (body.studentCode || '').toLowerCase());
@@ -309,7 +342,7 @@ function handleMockApi(endpoint, options = {}) {
       rec.checkOut = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
     saveMockStore(store);
-    return { success: true, message: `Checked out successfully: ${body.studentCode}` };
+    return { success: true, message: `Checked out successfully: ${body.studentCode.toUpperCase()}` };
   }
 
   // 9. Active sessions
@@ -374,14 +407,14 @@ function setLoginRole(role) {
   const banner = document.getElementById('login-policy-banner');
 
   if (role === 'STUDENT') {
-    idLabel.textContent = 'Student ID';
-    idInput.placeholder = 'CS2024-001';
-    idInput.value = 'CS2024-001';
+    idLabel.textContent = 'Enrollment No.';
+    idInput.placeholder = '24EARCS001';
+    idInput.value = '24EARCS001';
     passInput.value = 'student123';
     banner.innerHTML = `
       <div class="notice-icon">🔒</div>
       <div class="notice-text">
-        <strong>Single-device policy:</strong> Students can only sign in on one device at a time. Active session is locked.
+        <strong>Arya Single-Device Policy:</strong> Students can only sign in on one device at a time. Active session is locked.
       </div>
     `;
   } else if (role === 'FACULTY') {
@@ -392,7 +425,7 @@ function setLoginRole(role) {
     banner.innerHTML = `
       <div class="notice-icon">🎓</div>
       <div class="notice-text">
-        <strong>Faculty Portal:</strong> View department timetables, monitor real-time verification, and review class rosters.
+        <strong>Arya Faculty Portal:</strong> Manage students, upload batch sheets, monitor live attendance and timetables.
       </div>
     `;
   } else {
@@ -403,7 +436,7 @@ function setLoginRole(role) {
     banner.innerHTML = `
       <div class="notice-icon">🛡️</div>
       <div class="notice-text">
-        <strong>Administrator Portal:</strong> Full controls for student records, daily attendance, and session unlocking.
+        <strong>Administrator Portal:</strong> Full controls for student records, batch sheet upload, and session unlocking.
       </div>
     `;
   }
@@ -424,7 +457,7 @@ async function handleLogin(e) {
   const submitBtn = document.getElementById('btn-submit-login');
 
   if (!username || !password) {
-    showToast('Please enter both username and password', 'error');
+    showToast('Please enter both username/enrollment and password', 'error');
     return;
   }
 
@@ -542,7 +575,7 @@ function startCampusClock() {
     if (!clockEl) return;
     const now = new Date();
     const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    clockEl.textContent = `${timeStr} · Campus Realtime`;
+    clockEl.textContent = `${timeStr} · ACEIT Campus Realtime`;
   }
   update();
   if (!state.clockInterval) {
@@ -694,17 +727,17 @@ function detectLiveLocation() {
   if ('geolocation' in navigator) {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        geoPill.innerHTML = `<span>📍 Within Campus Boundary (±${Math.round(pos.coords.accuracy)}m)</span>`;
+        geoPill.innerHTML = `<span>📍 Within ACEIT Campus Boundary (±${Math.round(pos.coords.accuracy)}m)</span>`;
         geoPill.style.color = 'var(--success)';
       },
       (err) => {
-        geoPill.innerHTML = `<span>📍 Campus Boundary Verified (Simulated GPS fallback)</span>`;
+        geoPill.innerHTML = `<span>📍 ACEIT Campus Boundary Verified (Simulated GPS fallback)</span>`;
         geoPill.style.color = 'var(--text-muted)';
       },
       { timeout: 5000 }
     );
   } else {
-    geoPill.innerHTML = `<span>📍 Campus Boundary Verified</span>`;
+    geoPill.innerHTML = `<span>📍 ACEIT Campus Boundary Verified</span>`;
   }
 }
 
@@ -810,7 +843,7 @@ async function executeLiveVerification() {
 }
 
 // ==========================================================================
-// ADMIN DASHBOARD LOGIC (Mockups 2 & 3)
+// ADMIN & FACULTY DASHBOARD LOGIC (Mockups 2 & 3)
 // ==========================================================================
 
 function routeToDashboard() {
@@ -818,14 +851,14 @@ function routeToDashboard() {
   document.getElementById('admin-view').classList.add('active');
 
   const u = state.currentUser;
-  document.getElementById('admin-user-display').textContent = `${u.fullName || u.username} (${u.role})`;
+  const isFaculty = u.role === 'FACULTY';
+
+  document.getElementById('admin-user-avatar').textContent = isFaculty ? 'FC' : 'AD';
+  document.getElementById('admin-user-name').textContent = u.fullName || (isFaculty ? 'Prof. Rajesh Kumar' : 'Administrator');
+  document.getElementById('admin-user-role').textContent = isFaculty ? 'Faculty Member · ACEIT' : 'System Administrator · ACEIT';
   
-  // Set tab based on role
-  if (u.role === 'FACULTY') {
-    switchAdminTab('timetable');
-  } else {
-    switchAdminTab('students');
-  }
+  // Both Admin and Faculty have access to manage students!
+  switchAdminTab('students');
 }
 
 function switchAdminTab(tab) {
@@ -915,7 +948,7 @@ function exportCurrentTableCSV() {
   const select = document.getElementById('db-table-select');
   const tableName = select ? select.value : 'export';
   link.setAttribute('href', encodedUri);
-  link.setAttribute('download', `${tableName}_${new Date().toISOString().slice(0,10)}.csv`);
+  link.setAttribute('download', `Arya_${tableName}_${new Date().toISOString().slice(0,10)}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -933,15 +966,18 @@ async function loadStudents() {
 function renderStudentsTable() {
   const tbody = document.getElementById('students-table-body');
   tbody.innerHTML = '';
-  document.getElementById('students-count-label').textContent = `${(state.students || []).length} enrolled`;
+  document.getElementById('students-count-label').textContent = `${(state.students || []).length} Arya College Enrolled`;
 
   (state.students || []).forEach(s => {
     const tr = document.createElement('tr');
+    const email = s.email || `${(s.code || '').toLowerCase()}@aryacollege.in`;
+    const sec = s.section || 'A';
     tr.innerHTML = `
-      <td><strong>${s.id}</strong></td>
-      <td><span style="font-family: var(--font-mono); font-weight:600;">${escapeHtml(s.code)}</span></td>
+      <td><span style="font-family: var(--font-mono); font-weight:700; color:var(--primary-blue);">${escapeHtml(s.code)}</span></td>
       <td><strong>${escapeHtml(s.name)}</strong></td>
+      <td><span style="color:var(--text-muted); font-size:12.5px;">${escapeHtml(email)}</span></td>
       <td>${escapeHtml(s.department)}</td>
+      <td><span class="badge-sec">Sec ${escapeHtml(sec)}</span></td>
       <td class="text-right">
         <button class="action-btn-link edit" onclick="openEditStudentModal(${JSON.stringify(s).replace(/"/g, '&quot;')})">Edit</button>
         <button class="action-btn-link delete" onclick="openDeleteStudentModal(${s.id}, '${escapeHtml(s.name)}', '${escapeHtml(s.code)}')">Delete</button>
@@ -950,6 +986,233 @@ function renderStudentsTable() {
     tbody.appendChild(tr);
   });
 }
+
+// ==========================================================================
+// ARYA COLLEGE STUDENT SHEET BULK UPLOAD FUNCTIONS
+// ==========================================================================
+
+function downloadSampleTemplateCSV() {
+  const csvContent = 
+`Full Name,Student College Email ID,Branch,Section,Enrollment No.
+Aarav Sharma,aarav.24earcs001@aryacollege.in,Computer Science & Engineering,A,24EARCS001
+Priya Rathore,priya.24earad001@aryacollege.in,Artificial Intelligence & Data Science,A,24EARAD001
+Rohan Verma,rohan.24earit001@aryacollege.in,Information Technology,B,24EARIT001
+Sneha Agarwal,sneha.24earcs002@aryacollege.in,Computer Science & Engineering,A,24EARCS002
+Devendra Singh,devendra.24earad002@aryacollege.in,Artificial Intelligence & Data Science,B,24EARAD002
+Anjali Meena,anjali.24earit002@aryacollege.in,Information Technology,A,24EARIT002`;
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', 'Arya_College_Student_Template.csv');
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  showToast('Sample Arya College CSV template downloaded!', 'success');
+}
+
+function openUploadSheetModal() {
+  state.parsedSheetStudents = [];
+  const fileInput = document.getElementById('sheet-file-input');
+  if (fileInput) fileInput.value = '';
+  const previewWrap = document.getElementById('sheet-preview-wrap');
+  if (previewWrap) previewWrap.classList.add('hidden');
+  const importBtn = document.getElementById('btn-import-sheet');
+  if (importBtn) {
+    importBtn.disabled = true;
+    importBtn.textContent = 'Import Students (0)';
+  }
+  const modal = document.getElementById('modal-upload-sheet');
+  if (modal) modal.classList.add('active');
+
+  setupDropzoneEvents();
+}
+
+function closeUploadSheetModal() {
+  const modal = document.getElementById('modal-upload-sheet');
+  if (modal) modal.classList.remove('active');
+  state.parsedSheetStudents = [];
+}
+
+function setupDropzoneEvents() {
+  const dropzone = document.getElementById('sheet-dropzone');
+  if (!dropzone || dropzone.dataset.hasEvents) return;
+  dropzone.dataset.hasEvents = 'true';
+
+  ['dragenter', 'dragover'].forEach(name => {
+    dropzone.addEventListener(name, (e) => {
+      e.preventDefault();
+      dropzone.classList.add('dragover');
+    });
+  });
+
+  ['dragleave', 'drop'].forEach(name => {
+    dropzone.addEventListener(name, (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+    });
+  });
+
+  dropzone.addEventListener('drop', (e) => {
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      processSheetFile(files[0]);
+    }
+  });
+}
+
+function handleSheetFileSelect(e) {
+  const files = e.target.files;
+  if (files && files.length > 0) {
+    processSheetFile(files[0]);
+  }
+}
+
+function processSheetFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    const text = evt.target.result;
+    parseAndPreviewCSV(text, file.name);
+  };
+  reader.readAsText(file);
+}
+
+function parseAndPreviewCSV(csvText, fileName) {
+  const lines = csvText.split(/\r?\n/).filter(line => line.trim().length > 0);
+  if (lines.length < 2) {
+    showToast('File appears empty or missing rows.', 'error');
+    return;
+  }
+
+  // Parse header row
+  const headers = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
+  
+  // Find column indices
+  let nameIdx = headers.findIndex(h => h.includes('name'));
+  let emailIdx = headers.findIndex(h => h.includes('email') || h.includes('mail'));
+  let branchIdx = headers.findIndex(h => h.includes('branch') || h.includes('dept') || h.includes('department'));
+  let secIdx = headers.findIndex(h => h.includes('sec') || h.includes('section'));
+  let codeIdx = headers.findIndex(h => h.includes('enroll') || h.includes('roll') || h.includes('code') || h.includes('id'));
+
+  if (nameIdx === -1) nameIdx = 0;
+  if (emailIdx === -1) emailIdx = 1;
+  if (branchIdx === -1) branchIdx = 2;
+  if (secIdx === -1) secIdx = 3;
+  if (codeIdx === -1) codeIdx = 4;
+
+  const parsed = [];
+  const tbody = document.getElementById('sheet-preview-tbody');
+  tbody.innerHTML = '';
+
+  for (let i = 1; i < lines.length; i++) {
+    const cols = parseCSVLine(lines[i]);
+    if (cols.length < 2) continue;
+
+    const name = cols[nameIdx] ? cols[nameIdx].trim() : '';
+    const email = cols[emailIdx] ? cols[emailIdx].trim() : '';
+    let branch = cols[branchIdx] ? cols[branchIdx].trim() : 'Computer Science & Engineering';
+    const section = cols[secIdx] ? cols[secIdx].trim().toUpperCase() : 'A';
+    let code = cols[codeIdx] ? cols[codeIdx].trim().toUpperCase() : '';
+
+    if (!code && !name) continue;
+
+    // Normalize Branch names
+    if (branch.toUpperCase() === 'CS' || branch.toUpperCase() === 'CSE') {
+      branch = 'Computer Science & Engineering';
+    } else if (branch.toUpperCase() === 'AI' || branch.toUpperCase() === 'DS' || branch.toUpperCase().includes('AI')) {
+      branch = 'Artificial Intelligence & Data Science';
+    } else if (branch.toUpperCase() === 'IT') {
+      branch = 'Information Technology';
+    }
+
+    // Auto-generate Arya code if missing based on branch
+    if (!code) {
+      const num = String(parsed.length + 1).padStart(3, '0');
+      if (branch.includes('Artificial')) code = `24EARAD0${num}`;
+      else if (branch.includes('Information')) code = `24EARIT0${num}`;
+      else code = `24EARCS0${num}`;
+    }
+
+    // Check Arya College enrollment format validation
+    const isAryaFormat = /^24EAR(CS|AD|IT|EC|EE|ME)0\d+/i.test(code) || code.startsWith('24EAR');
+
+    parsed.push({ code, name, email, department: branch, section });
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span style="font-family:var(--font-mono); font-weight:700; color:var(--primary-blue);">${escapeHtml(code)}</span></td>
+      <td><strong>${escapeHtml(name)}</strong></td>
+      <td><span style="color:var(--text-muted); font-size:12px;">${escapeHtml(email || code.toLowerCase() + '@aryacollege.in')}</span></td>
+      <td>${escapeHtml(branch)}</td>
+      <td><span class="badge-sec">Sec ${escapeHtml(section)}</span></td>
+      <td>
+        ${isAryaFormat 
+          ? `<span class="badge badge-verified">✓ Arya Verified</span>`
+          : `<span class="badge badge-warning">Custom Code</span>`}
+      </td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  state.parsedSheetStudents = parsed;
+
+  const previewWrap = document.getElementById('sheet-preview-wrap');
+  previewWrap.classList.remove('hidden');
+
+  document.getElementById('sheet-preview-count').textContent = `${parsed.length} Students Detected from ${fileName}`;
+
+  const importBtn = document.getElementById('btn-import-sheet');
+  importBtn.disabled = parsed.length === 0;
+  importBtn.textContent = `Import ${parsed.length} Students`;
+
+  showToast(`Parsed ${parsed.length} students from sheet!`, 'success');
+}
+
+function parseCSVLine(text) {
+  let row = [''], i = 0, q = false;
+  for (let c = 0; c < text.length; c++) {
+    let cc = text[c], nc = text[c + 1];
+    if (cc === '"') {
+      if (q && nc === '"') { row[i] += '"'; ++c; }
+      else { q = !q; }
+    } else if (cc === ',' && !q) {
+      row[++i] = '';
+    } else {
+      row[i] += cc;
+    }
+  }
+  return row.map(s => s.trim().replace(/^"|"$/g, ''));
+}
+
+async function confirmImportSheet() {
+  if (!state.parsedSheetStudents || state.parsedSheetStudents.length === 0) return;
+
+  const btn = document.getElementById('btn-import-sheet');
+  btn.disabled = true;
+  btn.textContent = 'Importing...';
+
+  try {
+    const res = await apiCall('/api/students/bulk', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(state.parsedSheetStudents)
+    });
+
+    showToast(`🎉 ${res.message || 'Students imported successfully into Arya College records!'}`, 'success');
+    closeUploadSheetModal();
+    await loadStudents();
+  } catch (err) {
+    showToast('Failed to import sheet: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ==========================================================================
+// ATTENDANCE MANAGEMENT
+// ==========================================================================
 
 async function loadAttendance() {
   const dateInput = document.getElementById('attendance-date-filter');
@@ -976,7 +1239,7 @@ function renderAttendanceTable() {
 
     tr.innerHTML = `
       <td><strong>${a.id}</strong></td>
-      <td><span style="font-family: var(--font-mono); font-weight:600;">${escapeHtml(a.studentCode)}</span></td>
+      <td><span style="font-family: var(--font-mono); font-weight:700; color:var(--primary-blue);">${escapeHtml(a.studentCode)}</span></td>
       <td>${escapeHtml(a.studentName)}</td>
       <td>${escapeHtml(a.date)}</td>
       <td>${escapeHtml(a.checkIn)}</td>
@@ -989,12 +1252,12 @@ function renderAttendanceTable() {
 
 async function handleAttendanceAction(action) {
   const input = document.getElementById('attendance-code-input');
-  const code = input.value.trim();
+  const code = input.value.trim().toUpperCase();
   const banner = document.getElementById('attendance-feedback-banner');
   const bannerText = document.getElementById('attendance-feedback-text');
 
   if (!code) {
-    showToast('Please enter a student code e.g. CS2024-001', 'error');
+    showToast('Please enter an enrollment number e.g. 24EARCS001', 'error');
     return;
   }
 
@@ -1043,7 +1306,7 @@ function renderSessionsTable() {
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td><strong>${escapeHtml(s.fullName)}</strong></td>
-      <td><span style="font-family: var(--font-mono);">${escapeHtml(s.studentCode || s.username)}</span></td>
+      <td><span style="font-family: var(--font-mono); font-weight:700;">${escapeHtml(s.studentCode || s.username)}</span></td>
       <td>${escapeHtml(s.department)}</td>
       <td><span class="badge badge-warning" style="font-family: var(--font-mono);">${escapeHtml(s.sessionId)}</span></td>
       <td>${escapeHtml(s.loginTime)}</td>
@@ -1104,7 +1367,7 @@ async function loadAdminTimetable() {
 // Modal 2: Single-Device Block (Mockup 5)
 function openSingleDeviceModal(detail, sessionId) {
   const msgEl = document.getElementById('single-device-dialog-message');
-  msgEl.innerHTML = `Your student account is currently active on device <strong>${escapeHtml(sessionId || 'Active Session')}</strong>. Multiple logins on another device or window are strictly blocked under single-device security policy. Contact your admin if this wasn't you.`;
+  msgEl.innerHTML = `Your student account is currently active on device <strong>${escapeHtml(sessionId || 'Active Session')}</strong>. Multiple logins on another device or window are strictly blocked under Arya College single-device security policy. Contact your faculty or admin if this wasn't you.`;
   document.getElementById('modal-single-device-block').classList.add('active');
 }
 
@@ -1113,7 +1376,7 @@ function closeSingleDeviceModal() {
 }
 
 function contactAdminAlert() {
-  alert('Admin Support Contact:\nEmail: admin@extremis.edu\nOffice: LT-101 Campus Administration\nAsk administrator to release active session lock.');
+  alert('Arya College Administration Support:\nEmail: admin@aryacollege.in\nOffice: Main Block Room 101, Arya College of Engineering & IT\nAsk faculty/admin to release active session lock.');
 }
 
 // Modal 3: Delete Student Confirmation (Mockup 4)
@@ -1149,13 +1412,15 @@ async function executeDeleteStudent() {
   }
 }
 
-// Modal 4: Add / Edit Student
+// Modal 4: Add / Edit Student (Arya College Format)
 function openAddStudentModal() {
   document.getElementById('student-modal-title').textContent = 'Add New Student';
   document.getElementById('student-form-id').value = '';
   document.getElementById('student-form-code').value = '';
   document.getElementById('student-form-name').value = '';
+  document.getElementById('student-form-email').value = '';
   document.getElementById('student-form-dept').value = 'Computer Science & Engineering';
+  document.getElementById('student-form-section').value = 'A';
   document.getElementById('modal-add-student').classList.add('active');
 }
 
@@ -1164,7 +1429,9 @@ function openEditStudentModal(student) {
   document.getElementById('student-form-id').value = student.id;
   document.getElementById('student-form-code').value = student.code;
   document.getElementById('student-form-name').value = student.name;
+  document.getElementById('student-form-email').value = student.email || (student.code.toLowerCase() + '@aryacollege.in');
   document.getElementById('student-form-dept').value = student.department;
+  document.getElementById('student-form-section').value = student.section || 'A';
   document.getElementById('modal-add-student').classList.add('active');
 }
 
@@ -1175,9 +1442,11 @@ function closeAddStudentModal() {
 async function handleSaveStudent(e) {
   e.preventDefault();
   const id = document.getElementById('student-form-id').value;
-  const code = document.getElementById('student-form-code').value.trim();
+  const code = document.getElementById('student-form-code').value.trim().toUpperCase();
   const name = document.getElementById('student-form-name').value.trim();
+  const email = document.getElementById('student-form-email').value.trim();
   const dept = document.getElementById('student-form-dept').value;
+  const section = document.getElementById('student-form-section').value;
 
   const url = id ? `/api/students/${id}` : '/api/students';
   const method = id ? 'PUT' : 'POST';
@@ -1186,7 +1455,7 @@ async function handleSaveStudent(e) {
     const data = await apiCall(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code, name, department: dept })
+      body: JSON.stringify({ code, name, department: dept, email, section })
     });
     if (data.success) {
       showToast(`Student ${id ? 'updated' : 'registered'} successfully!`, 'success');
@@ -1202,12 +1471,12 @@ async function handleSaveStudent(e) {
 
 // Student Extra Modals
 function openHistoryModal() {
-  alert('Lecture History:\nAll attendance snapshots are kept in-memory and logged with verifiable cryptographic hashes.');
+  alert('Arya College Attendance History:\nAll attendance snapshots are kept in-memory and logged with verifiable cryptographic hashes.');
 }
 
 function openStudentProfileModal() {
   const u = state.currentUser;
-  alert(`Student Profile:\nName: ${u.fullName}\nID: ${u.studentCode}\nDepartment: ${u.department}\nDevice Bound: ${u.sessionId || 'Active'}`);
+  alert(`Student Profile:\nName: ${u.fullName}\nEnrollment No: ${u.studentCode}\nBranch: ${u.department}\nDevice Bound: ${u.sessionId || 'Active'}`);
 }
 
 // ==========================================================================

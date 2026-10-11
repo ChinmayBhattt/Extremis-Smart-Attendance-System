@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Extremis — Student Attendance Management System</title>
+  <title>Arya College of Engineering &amp; IT — Extremis Smart Attendance</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -19,19 +19,19 @@
         <!-- Left Navy Brand Hero (Mockup 1 Left) -->
         <div class="login-hero-panel">
           <div class="brand-header">
-            <div class="brand-logo-icon">E</div>
-            <div class="brand-logo-text">Extremis</div>
+            <div class="brand-logo-icon">A</div>
+            <div class="brand-logo-text">Arya College of Engineering &amp; IT</div>
           </div>
 
           <div class="hero-content">
-            <h1 class="hero-title">Smart attendance<br>for every lecture.</h1>
+            <h1 class="hero-title">Smart attendance<br>for Arya College.</h1>
             <p class="hero-desc">
-              Timetable, live verification and attendance records for students, faculty and admins.
+              Real-time facial verification, branch timetables and attendance records for ACEIT students, faculty and admins.
             </p>
           </div>
 
           <div class="hero-footer">
-            <span>Separate login for each role</span>
+            <span>Arya College of Engineering and IT · Jaipur</span>
           </div>
         </div>
 
@@ -40,7 +40,7 @@
           <div class="form-container">
             <div class="form-header">
               <h2>Sign in</h2>
-              <p>Choose your role to continue.</p>
+              <p>Arya College Attendance Portal</p>
             </div>
 
             <!-- Role Capsule Toggle: Student | Faculty | Admin -->
@@ -53,8 +53,8 @@
             <!-- Login Form -->
             <form id="login-form" autocomplete="off">
               <div class="form-group">
-                <label id="login-id-label" for="login-username">Student ID</label>
-                <input type="text" id="login-username" class="form-input" placeholder="CS2024-001" required>
+                <label id="login-id-label" for="login-username">Enrollment No.</label>
+                <input type="text" id="login-username" class="form-input" placeholder="e.g. 24EARCS001, 24EARAD001, 24EARIT001" required>
               </div>
 
               <div class="form-group">
@@ -71,14 +71,15 @@
             <div id="login-policy-banner" class="policy-notice-card">
               <div class="notice-icon">🔒</div>
               <div class="notice-text">
-                <strong>Single-device policy:</strong> Students can only sign in on one device at a time. Active session is locked.
+                <strong>Arya Single-Device Policy:</strong> Students can only sign in on one device at a time. Active session is locked.
               </div>
             </div>
 
             <!-- Demo Quick-Fill Bar -->
             <div class="demo-helpers">
               <span class="demo-label">Quick Demo:</span>
-              <button type="button" class="demo-pill" onclick="quickFill('STUDENT', 'CS2024-001', 'student123')">Student (Aarav)</button>
+              <button type="button" class="demo-pill" onclick="quickFill('STUDENT', '24EARCS001', 'student123')">Student (CS: Aarav)</button>
+              <button type="button" class="demo-pill" onclick="quickFill('STUDENT', '24EARAD001', 'student123')">Student (AI&amp;DS: Priya)</button>
               <button type="button" class="demo-pill" onclick="quickFill('FACULTY', 'faculty.rajesh', 'faculty123')">Faculty</button>
               <button type="button" class="demo-pill" onclick="quickFill('ADMIN', 'admin', 'admin123')">Admin</button>
             </div>
@@ -95,9 +96,9 @@
         <!-- Top Navigation Bar -->
         <header class="student-top-navbar">
           <div class="navbar-brand-group">
-            <div class="brand-logo-icon">E</div>
+            <div class="brand-logo-icon">A</div>
             <div class="brand-info">
-              <span class="brand-logo-text">Extremis</span>
+              <span class="brand-logo-text">Arya College of Engineering &amp; IT</span>
               <span class="portal-badge">Student Portal</span>
             </div>
           </div>
@@ -233,8 +234,8 @@
         <aside class="dashboard-sidebar">
           <div class="sidebar-top">
             <div class="brand-header">
-              <div class="brand-logo-icon">E</div>
-              <div class="brand-logo-text">Extremis</div>
+              <div class="brand-logo-icon">A</div>
+              <div class="brand-logo-text">Arya College of Engineering &amp; IT</div>
             </div>
 
             <nav class="sidebar-nav">
@@ -283,9 +284,13 @@
             <div class="dash-header">
               <div class="dash-title-group">
                 <h2>Students</h2>
-                <p id="students-count-label">3 enrolled</p>
+                <p id="students-count-label">Arya College Enrolled</p>
               </div>
               <div class="dash-actions">
+                <button class="btn btn-outline" onclick="openUploadSheetModal()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                  <span>Upload Sheet (CSV)</span>
+                </button>
                 <button class="btn btn-primary" onclick="openAddStudentModal()">
                   + Add Student
                 </button>
@@ -301,10 +306,11 @@
                 <table class="data-table">
                   <thead>
                     <tr>
-                      <th>ID</th>
-                      <th>CODE</th>
-                      <th>NAME</th>
-                      <th>DEPARTMENT</th>
+                      <th>ENROLLMENT NO.</th>
+                      <th>FULL NAME</th>
+                      <th>COLLEGE EMAIL</th>
+                      <th>BRANCH</th>
+                      <th>SEC</th>
                       <th class="text-right">ACTIONS</th>
                     </tr>
                   </thead>
@@ -599,38 +605,137 @@
     </div>
 
     <!-- ==========================================
-         MODAL 4: ADD / EDIT STUDENT MODAL
+         MODAL 4: ADD / EDIT STUDENT MODAL (Arya College Format)
          ========================================== -->
     <div id="modal-add-student" class="modal-backdrop">
       <div class="modal-dialog form-dialog">
         <div class="modal-header">
-          <h3 id="student-modal-title">Add New Student</h3>
+          <div>
+            <h3 id="student-modal-title">Add New Student</h3>
+            <p class="modal-subtitle">Arya College of Engineering &amp; IT</p>
+          </div>
           <button class="btn-close" onclick="closeAddStudentModal()">&times;</button>
         </div>
         <form id="student-form" onsubmit="handleSaveStudent(event)">
           <input type="hidden" id="student-form-id">
           <div class="form-group">
-            <label for="student-form-code">Student Code / Roll Number</label>
-            <input type="text" id="student-form-code" class="form-input" placeholder="e.g. CS2024-003" required>
+            <label for="student-form-code">Enrollment No. (Arya Format)</label>
+            <input type="text" id="student-form-code" class="form-input" placeholder="e.g. 24EARCS001, 24EARAD001, 24EARIT001" required>
+            <small style="color:var(--text-muted); font-size:11.5px; display:block; margin-top:4px;">
+              Format: <code>24EARCS0...</code> (CS) · <code>24EARAD0...</code> (AI &amp; DS) · <code>24EARIT0...</code> (IT)
+            </small>
           </div>
           <div class="form-group">
             <label for="student-form-name">Full Name</label>
-            <input type="text" id="student-form-name" class="form-input" placeholder="e.g. Priya Sharma" required>
+            <input type="text" id="student-form-name" class="form-input" placeholder="e.g. Aarav Sharma" required>
           </div>
           <div class="form-group">
-            <label for="student-form-dept">Department</label>
-            <select id="student-form-dept" class="form-select" required>
-              <option value="Computer Science & Engineering">Computer Science &amp; Engineering</option>
-              <option value="Information Technology">Information Technology</option>
-              <option value="Artificial Intelligence & Data Science">Artificial Intelligence &amp; Data Science</option>
-              <option value="Electronics & Communication">Electronics &amp; Communication</option>
-            </select>
+            <label for="student-form-email">Student College Email ID</label>
+            <input type="email" id="student-form-email" class="form-input" placeholder="e.g. aarav.24earcs001@aryacollege.in" required>
+          </div>
+          <div style="display:flex; gap:12px;">
+            <div class="form-group" style="flex:2;">
+              <label for="student-form-dept">Branch</label>
+              <select id="student-form-dept" class="form-select" required>
+                <option value="Computer Science & Engineering">Computer Science &amp; Engineering (CS)</option>
+                <option value="Artificial Intelligence & Data Science">Artificial Intelligence &amp; Data Science (AI &amp; DS)</option>
+                <option value="Information Technology">Information Technology (IT)</option>
+                <option value="Electronics & Communication">Electronics &amp; Communication (ECE)</option>
+                <option value="Electrical Engineering">Electrical Engineering (EE)</option>
+                <option value="Mechanical Engineering">Mechanical Engineering (ME)</option>
+              </select>
+            </div>
+            <div class="form-group" style="flex:1;">
+              <label for="student-form-section">Section</label>
+              <select id="student-form-section" class="form-select" required>
+                <option value="A">Section A</option>
+                <option value="B">Section B</option>
+                <option value="C">Section C</option>
+                <option value="D">Section D</option>
+              </select>
+            </div>
           </div>
           <div class="dialog-actions-row">
             <button type="button" class="btn btn-outline" onclick="closeAddStudentModal()">Cancel</button>
             <button type="submit" class="btn btn-primary">Save Student</button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         MODAL 5: UPLOAD STUDENT DATA SHEET (Arya College Format)
+         ========================================== -->
+    <div id="modal-upload-sheet" class="modal-backdrop">
+      <div class="modal-dialog form-dialog modal-dialog-lg">
+        <div class="modal-header">
+          <div>
+            <h3 class="modal-title">Upload Student Data Sheet</h3>
+            <p class="modal-subtitle">Arya College of Engineering &amp; IT · Bulk Student Onboarding</p>
+          </div>
+          <button class="btn-close" onclick="closeUploadSheetModal()">&times;</button>
+        </div>
+
+        <div class="sheet-upload-content">
+          <!-- College Format Guidelines Banner -->
+          <div class="college-format-banner">
+            <div class="format-header">
+              <span class="college-badge">Arya College Enrollment Standards</span>
+              <button type="button" class="btn btn-outline btn-sm" onclick="downloadSampleTemplateCSV()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>Download Sample CSV Template</span>
+              </button>
+            </div>
+            <div class="format-chips">
+              <span class="chip"><strong>AI &amp; DS:</strong> 24EARAD001, 24EARAD002...</span>
+              <span class="chip"><strong>CS:</strong> 24EARCS001, 24EARCS002...</span>
+              <span class="chip"><strong>IT:</strong> 24EARIT001, 24EARIT002...</span>
+            </div>
+            <p class="format-note">Required Columns: <code>Full Name</code>, <code>Student College Email ID</code>, <code>Branch</code>, <code>Section</code>, <code>Enrollment No.</code></p>
+          </div>
+
+          <!-- Drag and Drop Dropzone -->
+          <div id="sheet-dropzone" class="sheet-dropzone" onclick="document.getElementById('sheet-file-input').click()">
+            <input type="file" id="sheet-file-input" accept=".csv,.txt" style="display:none;" onchange="handleSheetFileSelect(event)">
+            <div class="dropzone-icon">📊</div>
+            <div class="dropzone-text">
+              <strong>Click to upload student sheet</strong> or drag and drop CSV file here
+            </div>
+            <div class="dropzone-sub">Supports CSV (.csv) or Comma-separated spreadsheet files</div>
+          </div>
+
+          <!-- Sheet Preview Table -->
+          <div id="sheet-preview-wrap" class="sheet-preview-wrap hidden">
+            <div class="preview-header">
+              <h4 id="sheet-preview-count">0 Students Detected</h4>
+              <span class="badge badge-verified">Ready to Import</span>
+            </div>
+            <div class="table-responsive sheet-table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ENROLLMENT NO.</th>
+                    <th>FULL NAME</th>
+                    <th>COLLEGE EMAIL</th>
+                    <th>BRANCH</th>
+                    <th>SEC</th>
+                    <th>VALIDATION</th>
+                  </tr>
+                </thead>
+                <tbody id="sheet-preview-tbody">
+                  <!-- Populated upon file load -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="dialog-actions-row">
+            <button type="button" class="btn btn-outline" onclick="closeUploadSheetModal()">Cancel</button>
+            <button type="button" id="btn-import-sheet" class="btn btn-primary" onclick="confirmImportSheet()" disabled>
+              Import Students (0)
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 

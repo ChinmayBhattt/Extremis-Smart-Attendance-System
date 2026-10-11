@@ -98,7 +98,9 @@ public class DatabaseManager {
                 %s,
                 code VARCHAR(64) NOT NULL UNIQUE,
                 name VARCHAR(128) NOT NULL,
-                department VARCHAR(128) NOT NULL
+                department VARCHAR(128) NOT NULL,
+                email VARCHAR(128),
+                section VARCHAR(16)
             );
         """, pk);
 
@@ -174,6 +176,10 @@ public class DatabaseManager {
             stmt.execute(createTimeTable);
             stmt.execute(createLectureAttendanceTable);
             stmt.execute(createIndices);
+
+            // Safe column additions for pre-existing tables
+            try { stmt.execute("ALTER TABLE students ADD COLUMN email VARCHAR(128)"); } catch (Exception ignored) {}
+            try { stmt.execute("ALTER TABLE students ADD COLUMN section VARCHAR(16)"); } catch (Exception ignored) {}
         }
     }
 

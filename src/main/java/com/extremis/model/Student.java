@@ -10,6 +10,8 @@ public class Student {
     private String code;
     private String name;
     private String department;
+    private String email;
+    private String section;
 
     public Student() {
     }
@@ -25,6 +27,15 @@ public class Student {
         this.code = code;
         this.name = name;
         this.department = department;
+    }
+
+    public Student(int id, String code, String name, String department, String email, String section) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.department = department;
+        this.email = email;
+        this.section = section;
     }
 
     public int getId() {
@@ -57,6 +68,22 @@ public class Student {
 
     public void setDepartment(String department) {
         this.department = department;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getSection() {
+        return section;
+    }
+
+    public void setSection(String section) {
+        this.section = section;
     }
 
     @Override

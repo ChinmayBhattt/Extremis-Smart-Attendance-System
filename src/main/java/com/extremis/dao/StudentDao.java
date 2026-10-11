@@ -23,12 +23,14 @@ public class StudentDao {
      * @return inserted student with generated ID.
      */
     public Student addStudent(Student student) throws SQLException {
-        String sql = "INSERT INTO students (code, name, department) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO students (code, name, department, email, section) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = dbManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, student.getCode().trim());
             pstmt.setString(2, student.getName().trim());
             pstmt.setString(3, student.getDepartment().trim());
+            pstmt.setString(4, student.getEmail() != null ? student.getEmail().trim() : "");
+            pstmt.setString(5, student.getSection() != null ? student.getSection().trim() : "A");
             pstmt.executeUpdate();
 
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
@@ -41,11 +43,37 @@ public class StudentDao {
     }
 
     /**
+     * Bulk inserts a list of students (for sheet uploads).
+     */
+    public int bulkAddStudents(List<Student> students) throws SQLException {
+        String sql = "INSERT INTO students (code, name, department, email, section) VALUES (?, ?, ?, ?, ?)";
+        int count = 0;
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            for (Student s : students) {
+                // If student code already exists, skip
+                if (studentCodeExists(s.getCode(), null)) {
+                    continue;
+                }
+                pstmt.setString(1, s.getCode().trim());
+                pstmt.setString(2, s.getName().trim());
+                pstmt.setString(3, s.getDepartment().trim());
+                pstmt.setString(4, s.getEmail() != null ? s.getEmail().trim() : "");
+                pstmt.setString(5, s.getSection() != null ? s.getSection().trim() : "A");
+                pstmt.addBatch();
+                count++;
+            }
+            pstmt.executeBatch();
+        }
+        return count;
+    }
+
+    /**
      * Retrieves all students ordered by ID.
      */
     public List<Student> getAllStudents() throws SQLException {
         List<Student> students = new ArrayList<>();
-        String sql = "SELECT id, code, name, department FROM students ORDER BY id ASC";
+        String sql = "SELECT id, code, name, department, email, section FROM students ORDER BY id ASC";
         try (Connection conn = dbManager.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -54,7 +82,9 @@ public class StudentDao {
                         rs.getInt("id"),
                         rs.getString("code"),
                         rs.getString("name"),
-                        rs.getString("department")
+                        rs.getString("department"),
+                        rs.getString("email"),
+                        rs.getString("section")
                 ));
             }
         }
@@ -65,7 +95,7 @@ public class StudentDao {
      * Retrieves a student by their unique student code (case-insensitive search).
      */
     public Student getStudentByCode(String code) throws SQLException {
-        String sql = "SELECT id, code, name, department FROM students WHERE UPPER(code) = UPPER(?)";
+        String sql = "SELECT id, code, name, department, email, section FROM students WHERE UPPER(code) = UPPER(?)";
         try (Connection conn = dbManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, code.trim());
@@ -75,7 +105,9 @@ public class StudentDao {
                             rs.getInt("id"),
                             rs.getString("code"),
                             rs.getString("name"),
-                            rs.getString("department")
+                            rs.getString("department"),
+                            rs.getString("email"),
+                            rs.getString("section")
                     );
                 }
             }
@@ -87,7 +119,7 @@ public class StudentDao {
      * Retrieves a student by internal database ID.
      */
     public Student getStudentById(int id) throws SQLException {
-        String sql = "SELECT id, code, name, department FROM students WHERE id = ?";
+        String sql = "SELECT id, code, name, department, email, section FROM students WHERE id = ?";
         try (Connection conn = dbManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
@@ -97,7 +129,9 @@ public class StudentDao {
                             rs.getInt("id"),
                             rs.getString("code"),
                             rs.getString("name"),
-                            rs.getString("department")
+                            rs.getString("department"),
+                            rs.getString("email"),
+                            rs.getString("section")
                     );
                 }
             }
@@ -109,13 +143,15 @@ public class StudentDao {
      * Updates an existing student record.
      */
     public boolean updateStudent(Student student) throws SQLException {
-        String sql = "UPDATE students SET code = ?, name = ?, department = ? WHERE id = ?";
+        String sql = "UPDATE students SET code = ?, name = ?, department = ?, email = ?, section = ? WHERE id = ?";
         try (Connection conn = dbManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, student.getCode().trim());
             pstmt.setString(2, student.getName().trim());
             pstmt.setString(3, student.getDepartment().trim());
-            pstmt.setInt(4, student.getId());
+            pstmt.setString(4, student.getEmail() != null ? student.getEmail().trim() : "");
+            pstmt.setString(5, student.getSection() != null ? student.getSection().trim() : "A");
+            pstmt.setInt(6, student.getId());
             return pstmt.executeUpdate() > 0;
         }
     }

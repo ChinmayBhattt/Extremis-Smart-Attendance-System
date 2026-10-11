@@ -150,11 +150,44 @@ public class WebServer {
                 String code = body.get("code");
                 String name = body.get("name");
                 String dept = body.get("department");
+                String email = body.get("email");
+                String section = body.get("section");
 
-                Student created = attendanceService.registerStudent(code, name, dept);
+                Student created = attendanceService.registerStudent(code, name, dept, email, section);
+                // Also provision login user if not existing
+                try {
+                    authService.getUserDao().addUser(new User(0, code.trim(), "student123", "STUDENT", name.trim(), dept, code.trim(), null, null));
+                } catch (Exception ignored) {}
+
                 ctx.status(201).json(Map.of("success", true, "student", created));
             } catch (ValidationException ve) {
                 ctx.status(400).json(Map.of("success", false, "message", ve.getMessage()));
+            }
+        });
+
+        app.post("/api/students/bulk", ctx -> {
+            try {
+                List<Map<String, Object>> list = ctx.bodyAsClass(List.class);
+                int count = 0;
+                for (Map<String, Object> item : list) {
+                    String code = (String) item.get("code");
+                    String name = (String) item.get("name");
+                    String dept = (String) item.get("department");
+                    String email = (String) item.get("email");
+                    String section = (String) item.get("section");
+                    if (code != null && name != null) {
+                        try {
+                            attendanceService.registerStudent(code, name, dept != null ? dept : "Computer Science & Engineering", email, section);
+                            authService.getUserDao().addUser(new User(0, code.trim(), "student123", "STUDENT", name.trim(), dept, code.trim(), null, null));
+                            count++;
+                        } catch (Exception ignored) {
+                            // Skip duplicates
+                        }
+                    }
+                }
+                ctx.json(Map.of("success", true, "importedCount", count, "message", "Successfully imported " + count + " Arya College students."));
+            } catch (Exception e) {
+                ctx.status(400).json(Map.of("success", false, "message", e.getMessage()));
             }
         });
 
@@ -165,8 +198,10 @@ public class WebServer {
                 String code = body.get("code");
                 String name = body.get("name");
                 String dept = body.get("department");
+                String email = body.get("email");
+                String section = body.get("section");
 
-                attendanceService.updateStudent(id, code, name, dept);
+                attendanceService.updateStudent(id, code, name, dept, email, section);
                 ctx.json(Map.of("success", true, "message", "Student updated successfully"));
             } catch (ValidationException ve) {
                 ctx.status(400).json(Map.of("success", false, "message", ve.getMessage()));
