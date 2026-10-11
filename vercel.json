@@ -1,0 +1,10 @@
+{
+  "outputDirectory": "src/main/resources/public",
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/$1"
+    }
+  ]
+}
