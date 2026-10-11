@@ -185,7 +185,7 @@ public class WebServer {
                         }
                     }
                 }
-                ctx.json(Map.of("success", true, "importedCount", count, "message", "Successfully imported " + count + " Arya College students."));
+                ctx.json(Map.of("success", true, "importedCount", count, "message", "Successfully imported " + count + " Extremis students."));
             } catch (Exception e) {
                 ctx.status(400).json(Map.of("success", false, "message", e.getMessage()));
             }

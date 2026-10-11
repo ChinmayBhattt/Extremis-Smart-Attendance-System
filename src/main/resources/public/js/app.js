@@ -1,8 +1,8 @@
 /**
- * Extremis Web Application — Arya College of Engineering & IT (ACEIT)
+ * Extremis Web Application
  * Modern frontend logic matching all 7 Figma mockups with real Web APIs
  * Includes dual-mode resilient API client (Native Java Backend + Cloud/Vercel Client Fallback)
- * Includes Arya College student sheet parser & bulk upload functionality
+ * Includes bulk student sheet parser & onboarding functionality
  */
 
 // Application State
@@ -22,17 +22,17 @@ const state = {
 };
 
 // ==========================================================================
-// RESILIENT API CLIENT & ARYA COLLEGE DATA STORE (Vercel & Offline Fallback)
+// RESILIENT API CLIENT & EXTREMIS DATA STORE (Vercel & Offline Fallback)
 // ==========================================================================
 
 const DEFAULT_MOCK_DATA = {
   students: [
-    { id: 1, code: '24EARCS001', name: 'Aarav Sharma', department: 'Computer Science & Engineering', email: 'aarav.24earcs001@aryacollege.in', section: 'A' },
-    { id: 2, code: '24EARCS002', name: 'Sneha Agarwal', department: 'Computer Science & Engineering', email: 'sneha.24earcs002@aryacollege.in', section: 'A' },
-    { id: 3, code: '24EARAD001', name: 'Priya Rathore', department: 'Artificial Intelligence & Data Science', email: 'priya.24earad001@aryacollege.in', section: 'A' },
-    { id: 4, code: '24EARAD002', name: 'Devendra Singh', department: 'Artificial Intelligence & Data Science', email: 'devendra.24earad002@aryacollege.in', section: 'B' },
-    { id: 5, code: '24EARIT001', name: 'Rohan Verma', department: 'Information Technology', email: 'rohan.24earit001@aryacollege.in', section: 'B' },
-    { id: 6, code: '24EARIT002', name: 'Anjali Meena', department: 'Information Technology', email: 'anjali.24earit002@aryacollege.in', section: 'A' }
+    { id: 1, code: '24EARCS001', name: 'Aarav Sharma', department: 'Computer Science & Engineering', email: 'aarav.cs001@extremis.edu', section: 'A' },
+    { id: 2, code: '24EARCS002', name: 'Sneha Agarwal', department: 'Computer Science & Engineering', email: 'sneha.cs002@extremis.edu', section: 'A' },
+    { id: 3, code: '24EARAD001', name: 'Priya Rathore', department: 'Artificial Intelligence & Data Science', email: 'priya.ad001@extremis.edu', section: 'A' },
+    { id: 4, code: '24EARAD002', name: 'Devendra Singh', department: 'Artificial Intelligence & Data Science', email: 'devendra.ad002@extremis.edu', section: 'B' },
+    { id: 5, code: '24EARIT001', name: 'Rohan Verma', department: 'Information Technology', email: 'rohan.it001@extremis.edu', section: 'B' },
+    { id: 6, code: '24EARIT002', name: 'Anjali Meena', department: 'Information Technology', email: 'anjali.it002@extremis.edu', section: 'A' }
   ],
   timetable: [
     { id: 1, subject: 'CS401 — Data Structures & Algorithms', facultyName: 'Prof. Rajesh Kumar', startTime: '09:00', endTime: '10:00', verificationTime: '09:05', roomNumber: 'LT-102', department: 'Computer Science & Engineering', dayOfWeek: 'Monday' },
@@ -52,7 +52,7 @@ const DEFAULT_MOCK_DATA = {
 
 function getMockStore() {
   try {
-    const raw = localStorage.getItem('extremis_arya_store_v2');
+    const raw = localStorage.getItem('extremis_store_v3') || localStorage.getItem('extremis_arya_store_v2');
     if (raw) return JSON.parse(raw);
   } catch (e) {}
   saveMockStore(DEFAULT_MOCK_DATA);
@@ -61,7 +61,7 @@ function getMockStore() {
 
 function saveMockStore(data) {
   try {
-    localStorage.setItem('extremis_arya_store_v2', JSON.stringify(data));
+    localStorage.setItem('extremis_store_v3', JSON.stringify(data));
   } catch (e) {}
 }
 
@@ -108,7 +108,7 @@ function handleMockApi(endpoint, options = {}) {
         code: cleanUser || '24EARCS001',
         name: cleanUser.toUpperCase() === '24EARCS002' ? 'Sneha Agarwal' : (cleanUser.toUpperCase() === '24EARAD001' ? 'Priya Rathore' : (cleanUser.toUpperCase() === '24EARIT001' ? 'Rohan Verma' : 'Aarav Sharma')),
         department: cleanUser.toUpperCase().includes('AD') ? 'Artificial Intelligence & Data Science' : (cleanUser.toUpperCase().includes('IT') ? 'Information Technology' : 'Computer Science & Engineering'),
-        email: cleanUser.toLowerCase() + '@aryacollege.in',
+        email: cleanUser.toLowerCase() + '@extremis.edu',
         section: 'A'
       };
 
@@ -155,7 +155,7 @@ function handleMockApi(endpoint, options = {}) {
         user: {
           id: 999,
           username: cleanUser || 'admin',
-          fullName: 'Arya System Administrator',
+          fullName: 'Extremis System Administrator',
           role: 'ADMIN'
         }
       };
@@ -208,14 +208,14 @@ function handleMockApi(endpoint, options = {}) {
     const table = urlObj.searchParams.get('table') || 'students';
     const isVercel = window.location.hostname.includes('vercel.app');
     const dbType = isVercel ? 'PostgreSQL (Cloud Database)' : 'PostgreSQL / SQLite';
-    const dbUrl = 'postgresql://arya_admin:••••••••@aws.pooler.supabase.com:5432/arya_extremis_db';
+    const dbUrl = 'postgresql://extremis_admin:••••••••@aws.pooler.supabase.com:5432/extremis_db';
 
     if (table === 'students') {
       return {
         dbType,
         url: dbUrl,
         columns: ['id', 'enrollment_no', 'full_name', 'college_email', 'branch', 'section'],
-        rows: store.students.map(s => [s.id, s.code, s.name, s.email || (s.code.toLowerCase() + '@aryacollege.in'), s.department, s.section || 'A'])
+        rows: store.students.map(s => [s.id, s.code, s.name, s.email || (s.code.toLowerCase() + '@extremis.edu'), s.department, s.section || 'A'])
       };
     } else if (table === 'attendance') {
       return {
@@ -268,7 +268,7 @@ function handleMockApi(endpoint, options = {}) {
             code: cleanCode,
             name: item.name.trim(),
             department: item.department ? item.department.trim() : 'Computer Science & Engineering',
-            email: item.email ? item.email.trim() : `${cleanCode.toLowerCase()}@aryacollege.in`,
+            email: item.email ? item.email.trim() : `${cleanCode.toLowerCase()}@extremis.edu`,
             section: item.section ? item.section.trim().toUpperCase() : 'A'
           });
           count++;
@@ -276,7 +276,7 @@ function handleMockApi(endpoint, options = {}) {
       }
     });
     saveMockStore(store);
-    return { success: true, importedCount: count, message: `Successfully imported ${count} Arya College students.` };
+    return { success: true, importedCount: count, message: `Successfully imported ${count} students.` };
   }
   if (pathname === '/api/students' && method === 'POST') {
     const newStudent = {
@@ -284,7 +284,7 @@ function handleMockApi(endpoint, options = {}) {
       code: body.code.toUpperCase(),
       name: body.name,
       department: body.department,
-      email: body.email || (body.code.toLowerCase() + '@aryacollege.in'),
+      email: body.email || (body.code.toLowerCase() + '@extremis.edu'),
       section: body.section || 'A'
     };
     store.students.push(newStudent);
@@ -414,7 +414,7 @@ function setLoginRole(role) {
     banner.innerHTML = `
       <div class="notice-icon">🔒</div>
       <div class="notice-text">
-        <strong>Arya Single-Device Policy:</strong> Students can only sign in on one device at a time. Active session is locked.
+        <strong>Extremis Single-Device Policy:</strong> Students can only sign in on one device at a time. Active session is locked.
       </div>
     `;
   } else if (role === 'FACULTY') {
@@ -425,7 +425,7 @@ function setLoginRole(role) {
     banner.innerHTML = `
       <div class="notice-icon">🎓</div>
       <div class="notice-text">
-        <strong>Arya Faculty Portal:</strong> Manage students, upload batch sheets, monitor live attendance and timetables.
+        <strong>Extremis Faculty Portal:</strong> Manage students, upload batch sheets, monitor live attendance and timetables.
       </div>
     `;
   } else {
@@ -948,7 +948,7 @@ function exportCurrentTableCSV() {
   const select = document.getElementById('db-table-select');
   const tableName = select ? select.value : 'export';
   link.setAttribute('href', encodedUri);
-  link.setAttribute('download', `Arya_${tableName}_${new Date().toISOString().slice(0,10)}.csv`);
+  link.setAttribute('download', `Extremis_${tableName}_${new Date().toISOString().slice(0,10)}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -966,11 +966,11 @@ async function loadStudents() {
 function renderStudentsTable() {
   const tbody = document.getElementById('students-table-body');
   tbody.innerHTML = '';
-  document.getElementById('students-count-label').textContent = `${(state.students || []).length} Arya College Enrolled`;
+  document.getElementById('students-count-label').textContent = `${(state.students || []).length} Enrolled Students`;
 
   (state.students || []).forEach(s => {
     const tr = document.createElement('tr');
-    const email = s.email || `${(s.code || '').toLowerCase()}@aryacollege.in`;
+    const email = s.email || `${(s.code || '').toLowerCase()}@extremis.edu`;
     const sec = s.section || 'A';
     tr.innerHTML = `
       <td><span style="font-family: var(--font-mono); font-weight:700; color:var(--primary-blue);">${escapeHtml(s.code)}</span></td>
@@ -988,28 +988,28 @@ function renderStudentsTable() {
 }
 
 // ==========================================================================
-// ARYA COLLEGE STUDENT SHEET BULK UPLOAD FUNCTIONS
+// EXTREMIS STUDENT SHEET BULK UPLOAD FUNCTIONS
 // ==========================================================================
 
 function downloadSampleTemplateCSV() {
   const csvContent = 
-`Full Name,Student College Email ID,Branch,Section,Enrollment No.
-Aarav Sharma,aarav.24earcs001@aryacollege.in,Computer Science & Engineering,A,24EARCS001
-Priya Rathore,priya.24earad001@aryacollege.in,Artificial Intelligence & Data Science,A,24EARAD001
-Rohan Verma,rohan.24earit001@aryacollege.in,Information Technology,B,24EARIT001
-Sneha Agarwal,sneha.24earcs002@aryacollege.in,Computer Science & Engineering,A,24EARCS002
-Devendra Singh,devendra.24earad002@aryacollege.in,Artificial Intelligence & Data Science,B,24EARAD002
-Anjali Meena,anjali.24earit002@aryacollege.in,Information Technology,A,24EARIT002`;
+`Full Name,Student Email ID,Branch,Section,Enrollment No.
+Aarav Sharma,aarav.cs001@extremis.edu,Computer Science & Engineering,A,24EARCS001
+Priya Rathore,priya.ad001@extremis.edu,Artificial Intelligence & Data Science,A,24EARAD001
+Rohan Verma,rohan.it001@extremis.edu,Information Technology,B,24EARIT001
+Sneha Agarwal,sneha.cs002@extremis.edu,Computer Science & Engineering,A,24EARCS002
+Devendra Singh,devendra.ad002@extremis.edu,Artificial Intelligence & Data Science,B,24EARAD002
+Anjali Meena,anjali.it002@extremis.edu,Information Technology,A,24EARIT002`;
 
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.setAttribute('href', url);
-  link.setAttribute('download', 'Arya_College_Student_Template.csv');
+  link.setAttribute('download', 'Extremis_Student_Template.csv');
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-  showToast('Sample Arya College CSV template downloaded!', 'success');
+  showToast('Sample Extremis CSV template downloaded!', 'success');
 }
 
 function openUploadSheetModal() {
@@ -1127,7 +1127,7 @@ function parseAndPreviewCSV(csvText, fileName) {
       branch = 'Information Technology';
     }
 
-    // Auto-generate Arya code if missing based on branch
+    // Auto-generate code if missing based on branch
     if (!code) {
       const num = String(parsed.length + 1).padStart(3, '0');
       if (branch.includes('Artificial')) code = `24EARAD0${num}`;
@@ -1135,8 +1135,8 @@ function parseAndPreviewCSV(csvText, fileName) {
       else code = `24EARCS0${num}`;
     }
 
-    // Check Arya College enrollment format validation
-    const isAryaFormat = /^24EAR(CS|AD|IT|EC|EE|ME)0\d+/i.test(code) || code.startsWith('24EAR');
+    // Check enrollment format validation
+    const isValidFormat = /^24EAR(CS|AD|IT|EC|EE|ME)0\d+/i.test(code) || code.startsWith('24EAR') || /^[A-Z0-9_-]{4,15}$/i.test(code);
 
     parsed.push({ code, name, email, department: branch, section });
 
@@ -1144,12 +1144,12 @@ function parseAndPreviewCSV(csvText, fileName) {
     tr.innerHTML = `
       <td><span style="font-family:var(--font-mono); font-weight:700; color:var(--primary-blue);">${escapeHtml(code)}</span></td>
       <td><strong>${escapeHtml(name)}</strong></td>
-      <td><span style="color:var(--text-muted); font-size:12px;">${escapeHtml(email || code.toLowerCase() + '@aryacollege.in')}</span></td>
+      <td><span style="color:var(--text-muted); font-size:12px;">${escapeHtml(email || code.toLowerCase() + '@extremis.edu')}</span></td>
       <td>${escapeHtml(branch)}</td>
       <td><span class="badge-sec">Sec ${escapeHtml(section)}</span></td>
       <td>
-        ${isAryaFormat 
-          ? `<span class="badge badge-verified">✓ Arya Verified</span>`
+        ${isValidFormat 
+          ? `<span class="badge badge-verified">✓ Verified Format</span>`
           : `<span class="badge badge-warning">Custom Code</span>`}
       </td>
     `;
@@ -1200,7 +1200,7 @@ async function confirmImportSheet() {
       body: JSON.stringify(state.parsedSheetStudents)
     });
 
-    showToast(`🎉 ${res.message || 'Students imported successfully into Arya College records!'}`, 'success');
+    showToast(`🎉 ${res.message || 'Students imported successfully into Extremis records!'}`, 'success');
     closeUploadSheetModal();
     await loadStudents();
   } catch (err) {
@@ -1367,7 +1367,7 @@ async function loadAdminTimetable() {
 // Modal 2: Single-Device Block (Mockup 5)
 function openSingleDeviceModal(detail, sessionId) {
   const msgEl = document.getElementById('single-device-dialog-message');
-  msgEl.innerHTML = `Your student account is currently active on device <strong>${escapeHtml(sessionId || 'Active Session')}</strong>. Multiple logins on another device or window are strictly blocked under Arya College single-device security policy. Contact your faculty or admin if this wasn't you.`;
+  msgEl.innerHTML = `Your student account is currently active on device <strong>${escapeHtml(sessionId || 'Active Session')}</strong>. Multiple logins on another device or window are strictly blocked under Extremis single-device security policy. Contact your faculty or admin if this wasn't you.`;
   document.getElementById('modal-single-device-block').classList.add('active');
 }
 
@@ -1376,7 +1376,7 @@ function closeSingleDeviceModal() {
 }
 
 function contactAdminAlert() {
-  alert('Arya College Administration Support:\nEmail: admin@aryacollege.in\nOffice: Main Block Room 101, Arya College of Engineering & IT\nAsk faculty/admin to release active session lock.');
+  alert('Extremis Administration Support:\nEmail: admin@extremis.edu\nAsk faculty/admin to release active session lock.');
 }
 
 // Modal 3: Delete Student Confirmation (Mockup 4)
@@ -1412,7 +1412,7 @@ async function executeDeleteStudent() {
   }
 }
 
-// Modal 4: Add / Edit Student (Arya College Format)
+// Modal 4: Add / Edit Student (Extremis Format)
 function openAddStudentModal() {
   document.getElementById('student-modal-title').textContent = 'Add New Student';
   document.getElementById('student-form-id').value = '';
@@ -1429,7 +1429,7 @@ function openEditStudentModal(student) {
   document.getElementById('student-form-id').value = student.id;
   document.getElementById('student-form-code').value = student.code;
   document.getElementById('student-form-name').value = student.name;
-  document.getElementById('student-form-email').value = student.email || (student.code.toLowerCase() + '@aryacollege.in');
+  document.getElementById('student-form-email').value = student.email || (student.code.toLowerCase() + '@extremis.edu');
   document.getElementById('student-form-dept').value = student.department;
   document.getElementById('student-form-section').value = student.section || 'A';
   document.getElementById('modal-add-student').classList.add('active');
@@ -1471,7 +1471,7 @@ async function handleSaveStudent(e) {
 
 // Student Extra Modals
 function openHistoryModal() {
-  alert('Arya College Attendance History:\nAll attendance snapshots are kept in-memory and logged with verifiable cryptographic hashes.');
+  alert('Extremis Attendance History:\nAll attendance snapshots are kept in-memory and logged with verifiable cryptographic hashes.');
 }
 
 function openStudentProfileModal() {

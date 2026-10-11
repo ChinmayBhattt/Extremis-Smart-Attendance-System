@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Arya College of Engineering &amp; IT — Extremis Smart Attendance</title>
+  <title>Extremis — Smart Attendance System</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -19,19 +19,19 @@
         <!-- Left Navy Brand Hero (Mockup 1 Left) -->
         <div class="login-hero-panel">
           <div class="brand-header">
-            <div class="brand-logo-icon">A</div>
-            <div class="brand-logo-text">Arya College of Engineering &amp; IT</div>
+            <div class="brand-logo-icon">E</div>
+            <div class="brand-logo-text">Extremis</div>
           </div>
 
           <div class="hero-content">
-            <h1 class="hero-title">Smart attendance<br>for Arya College.</h1>
+            <h1 class="hero-title">Smart attendance<br>with Extremis.</h1>
             <p class="hero-desc">
-              Real-time facial verification, branch timetables and attendance records for ACEIT students, faculty and admins.
+              Real-time facial verification, branch timetables and attendance records for students, faculty and administrators.
             </p>
           </div>
 
           <div class="hero-footer">
-            <span>Arya College of Engineering and IT · Jaipur</span>
+            <span>Extremis Smart Attendance System</span>
           </div>
         </div>
 
@@ -40,7 +40,7 @@
           <div class="form-container">
             <div class="form-header">
               <h2>Sign in</h2>
-              <p>Arya College Attendance Portal</p>
+              <p>Extremis Attendance Portal</p>
             </div>
 
             <!-- Role Capsule Toggle: Student | Faculty | Admin -->
@@ -71,7 +71,7 @@
             <div id="login-policy-banner" class="policy-notice-card">
               <div class="notice-icon">🔒</div>
               <div class="notice-text">
-                <strong>Arya Single-Device Policy:</strong> Students can only sign in on one device at a time. Active session is locked.
+                <strong>Extremis Single-Device Policy:</strong> Students can only sign in on one device at a time. Active session is locked.
               </div>
             </div>
 
@@ -96,9 +96,9 @@
         <!-- Top Navigation Bar -->
         <header class="student-top-navbar">
           <div class="navbar-brand-group">
-            <div class="brand-logo-icon">A</div>
+            <div class="brand-logo-icon">E</div>
             <div class="brand-info">
-              <span class="brand-logo-text">Arya College of Engineering &amp; IT</span>
+              <span class="brand-logo-text">Extremis</span>
               <span class="portal-badge">Student Portal</span>
             </div>
           </div>
@@ -234,8 +234,8 @@
         <aside class="dashboard-sidebar">
           <div class="sidebar-top">
             <div class="brand-header">
-              <div class="brand-logo-icon">A</div>
-              <div class="brand-logo-text">Arya College of Engineering &amp; IT</div>
+              <div class="brand-logo-icon">E</div>
+              <div class="brand-logo-text">Extremis</div>
             </div>
 
             <nav class="sidebar-nav">
@@ -284,7 +284,7 @@
             <div class="dash-header">
               <div class="dash-title-group">
                 <h2>Students</h2>
-                <p id="students-count-label">Arya College Enrolled</p>
+                <p id="students-count-label">Enrolled Students</p>
               </div>
               <div class="dash-actions">
                 <button class="btn btn-outline" onclick="openUploadSheetModal()">
@@ -605,22 +605,22 @@
     </div>
 
     <!-- ==========================================
-         MODAL 4: ADD / EDIT STUDENT MODAL (Arya College Format)
+         MODAL 4: ADD / EDIT STUDENT MODAL (Extremis Format)
          ========================================== -->
     <div id="modal-add-student" class="modal-backdrop">
       <div class="modal-dialog form-dialog">
         <div class="modal-header">
           <div>
             <h3 id="student-modal-title">Add New Student</h3>
-            <p class="modal-subtitle">Arya College of Engineering &amp; IT</p>
+            <p class="modal-subtitle">Extremis Attendance Management</p>
           </div>
           <button class="btn-close" onclick="closeAddStudentModal()">&times;</button>
         </div>
         <form id="student-form" onsubmit="handleSaveStudent(event)">
           <input type="hidden" id="student-form-id">
           <div class="form-group">
-            <label for="student-form-code">Enrollment No. (Arya Format)</label>
-            <input type="text" id="student-form-code" class="form-input" placeholder="e.g. 24EARCS001, 24EARAD001, 24EARIT001" required>
+            <label for="student-form-code">Enrollment / Student ID</label>
+            <input type="text" id="student-form-code" class="form-input" placeholder="e.g. 24EARCS001, EXT-CS001" required>
             <small style="color:var(--text-muted); font-size:11.5px; display:block; margin-top:4px;">
               Format: <code>24EARCS0...</code> (CS) · <code>24EARAD0...</code> (AI &amp; DS) · <code>24EARIT0...</code> (IT)
             </small>
@@ -630,8 +630,8 @@
             <input type="text" id="student-form-name" class="form-input" placeholder="e.g. Aarav Sharma" required>
           </div>
           <div class="form-group">
-            <label for="student-form-email">Student College Email ID</label>
-            <input type="email" id="student-form-email" class="form-input" placeholder="e.g. aarav.24earcs001@aryacollege.in" required>
+            <label for="student-form-email">Student Email ID</label>
+            <input type="email" id="student-form-email" class="form-input" placeholder="e.g. aarav.cs001@extremis.edu" required>
           </div>
           <div style="display:flex; gap:12px;">
             <div class="form-group" style="flex:2;">
@@ -664,14 +664,14 @@
     </div>
 
     <!-- ==========================================
-         MODAL 5: UPLOAD STUDENT DATA SHEET (Arya College Format)
+         MODAL 5: UPLOAD STUDENT DATA SHEET (Extremis Format)
          ========================================== -->
     <div id="modal-upload-sheet" class="modal-backdrop">
       <div class="modal-dialog form-dialog modal-dialog-lg">
         <div class="modal-header">
           <div>
             <h3 class="modal-title">Upload Student Data Sheet</h3>
-            <p class="modal-subtitle">Arya College of Engineering &amp; IT · Bulk Student Onboarding</p>
+            <p class="modal-subtitle">Extremis · Bulk Student Onboarding</p>
           </div>
           <button class="btn-close" onclick="closeUploadSheetModal()">&times;</button>
         </div>
@@ -680,7 +680,7 @@
           <!-- College Format Guidelines Banner -->
           <div class="college-format-banner">
             <div class="format-header">
-              <span class="college-badge">Arya College Enrollment Standards</span>
+              <span class="college-badge">Extremis Enrollment Standards</span>
               <button type="button" class="btn btn-outline btn-sm" onclick="downloadSampleTemplateCSV()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                 <span>Download Sample CSV Template</span>

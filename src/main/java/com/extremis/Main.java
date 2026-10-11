@@ -98,25 +98,25 @@ public class Main {
 
     private static void seedDataIfEmpty(AttendanceService service, UserDao userDao, TimeTableDao timeTableDao) {
         try {
-            // Seed Students matching Arya College of Engineering and IT
+            // Seed Students
             if (service.getStudentByCode("24EARCS001") == null) {
-                service.registerStudent("24EARCS001", "Aarav Sharma", "Computer Science & Engineering", "aarav.24earcs001@aryacollege.in", "A");
-                service.registerStudent("24EARCS002", "Sneha Agarwal", "Computer Science & Engineering", "sneha.24earcs002@aryacollege.in", "A");
-                service.registerStudent("24EARAD001", "Priya Rathore", "Artificial Intelligence & Data Science", "priya.24earad001@aryacollege.in", "A");
-                service.registerStudent("24EARAD002", "Devendra Singh", "Artificial Intelligence & Data Science", "devendra.24earad002@aryacollege.in", "B");
-                service.registerStudent("24EARIT001", "Rohan Verma", "Information Technology", "rohan.24earit001@aryacollege.in", "B");
-                service.registerStudent("24EARIT002", "Anjali Meena", "Information Technology", "anjali.24earit002@aryacollege.in", "A");
-                System.out.println("✓ Arya College of Engineering & IT students seeded.");
+                service.registerStudent("24EARCS001", "Aarav Sharma", "Computer Science & Engineering", "aarav.cs001@extremis.edu", "A");
+                service.registerStudent("24EARCS002", "Sneha Agarwal", "Computer Science & Engineering", "sneha.cs002@extremis.edu", "A");
+                service.registerStudent("24EARAD001", "Priya Rathore", "Artificial Intelligence & Data Science", "priya.ad001@extremis.edu", "A");
+                service.registerStudent("24EARAD002", "Devendra Singh", "Artificial Intelligence & Data Science", "devendra.ad002@extremis.edu", "B");
+                service.registerStudent("24EARIT001", "Rohan Verma", "Information Technology", "rohan.it001@extremis.edu", "B");
+                service.registerStudent("24EARIT002", "Anjali Meena", "Information Technology", "anjali.it002@extremis.edu", "A");
+                System.out.println("✓ Extremis students seeded.");
             }
 
             // Seed Users for all Roles
             if (userDao.getUserByUsername("24EARCS001") == null) {
-                userDao.addUser(new User(0, "admin", "admin123", "ADMIN", "System Administrator", "Arya Central Administration", null, null, null));
+                userDao.addUser(new User(0, "admin", "admin123", "ADMIN", "System Administrator", "Extremis Administration", null, null, null));
                 userDao.addUser(new User(0, "faculty.rajesh", "faculty123", "FACULTY", "Prof. Rajesh Kumar", "Computer Science & Engineering", null, null, null));
                 userDao.addUser(new User(0, "24EARCS001", "student123", "STUDENT", "Aarav Sharma", "Computer Science & Engineering", "24EARCS001", null, null));
                 userDao.addUser(new User(0, "24EARAD001", "student123", "STUDENT", "Priya Rathore", "Artificial Intelligence & Data Science", "24EARAD001", null, null));
                 userDao.addUser(new User(0, "24EARIT001", "student123", "STUDENT", "Rohan Verma", "Information Technology", "24EARIT001", null, null));
-                System.out.println("✓ Arya College of Engineering & IT users seeded.");
+                System.out.println("✓ Extremis users seeded.");
             }
 
             // Seed Branch Timetables matching Mockup 6
@@ -129,7 +129,7 @@ public class Main {
                         "Object Oriented Java", "Prof. Vikram Sen", "11:15", "12:15", "11:20", "Lab 2A"));
                 timeTableDao.addEntry(new TimeTableEntry(0, "Computer Science & Engineering", "Monday",
                         "Discrete Mathematics", "Dr. Ananya Bose", "01:00", "02:00", "01:05", "Room 304"));
-                System.out.println("✓ Arya College timetable seeded.");
+                System.out.println("✓ Extremis timetable seeded.");
             }
         } catch (Exception e) {
             System.err.println("Notice: Seeding skipped: " + e.getMessage());

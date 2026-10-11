@@ -1,26 +1,25 @@
-# 🎓 Arya College of Engineering & IT — Extremis Smart Attendance System
+# 🎓 Extremis — Smart Attendance System
 
 <p align="center">
-  <img src="https://img.shields.io/badge/College-Arya%20College%20of%20Engineering%20%26%20IT-1D61D2?style=for-the-badge&logo=mortarboard" alt="Arya College" />
+  <img src="https://img.shields.io/badge/Project-Extremis%20Smart%20Attendance-1D61D2?style=for-the-badge&logo=mortarboard" alt="Extremis" />
   <img src="https://img.shields.io/badge/Java-21%20LTS-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java 21" />
   <img src="https://img.shields.io/badge/Server-Javalin%206.3%20%2F%20Jetty-0B1E36?style=for-the-badge&logo=java" alt="Javalin" />
   <img src="https://img.shields.io/badge/Database-PostgreSQL%20%26%20SQLite-336791?style=for-the-badge&logo=postgresql&logoColor=white" alt="Database" />
   <img src="https://img.shields.io/badge/Deployment-Vercel%20%26%20Standalone%20JAR-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel" />
 </p>
 
-> **Academic Project-Based Learning (PBL) 2026–2027**  
-> Developed specifically for **Arya College of Engineering and IT (ACEIT)**, Jaipur.  
+> **Extremis Smart Attendance Platform**  
 > 🌐 **Live Web Application:** [extremis-nu.vercel.app](https://extremis-nu.vercel.app)
 
 ---
 
 ## 📌 Executive Summary
 
-**Extremis** is an enterprise-grade Smart Attendance and Lecture Verification System tailored to the academic workflow of **Arya College of Engineering & IT**. It solves proxy attendance, multi-device credential sharing, and manual attendance overhead through:
+**Extremis** is an enterprise-grade Smart Attendance and Lecture Verification System. It solves proxy attendance, multi-device credential sharing, and manual attendance overhead through:
 
 1. **🔒 Single-Device Session Lock (Students Only):** Each student account is bound to exactly one active device session. Simultaneous logins from other devices or browsers are strictly blocked.
 2. **📸 Zero-Footprint Real-Time Lecture Verification:** When a lecture starts (e.g., 09:00 AM), a 5-minute verification window opens (09:05 AM). Students align their face in an oval reticle with campus GPS geofencing. Snapshots are verified **purely in-memory** and **never saved to disk storage**, guaranteeing complete student privacy.
-3. **📊 Bulk Student Sheet Onboarding (CSV/Excel):** Admin and Faculty can upload entire batch sheets with 1-click template generation, automated validation of Arya College enrollment numbering, and instant account provisioning.
+3. **📊 Bulk Student Sheet Onboarding (CSV/Excel):** Admin and Faculty can upload entire batch sheets with 1-click template generation, automated validation of enrollment numbering, and instant account provisioning.
 4. **💾 Dual-Dialect Database Engine:** Supports cloud **PostgreSQL** (Supabase, Neon, AWS RDS) for production scale with zero-config local **SQLite** fallback, complete with an in-app interactive **Database Viewer & CSV Exporter**.
 
 ---
@@ -63,9 +62,9 @@ graph TD
 
 ---
 
-## 🏷️ Arya College Enrollment Standards
+## 🏷️ Departmental Enrollment Standards
 
-The system adheres strictly to the official enrollment numbering formats of Arya College of Engineering & IT:
+The system supports structured departmental enrollment numbering formats:
 
 | Branch / Department | Enrollment Prefix Format | Example Enrollment Numbers |
 | :--- | :--- | :--- |
@@ -86,20 +85,20 @@ The system adheres strictly to the official enrollment numbering formats of Arya
 | 🎓 **Student** | `24EARAD001` | `student123` | Priya Rathore (AI & DS, Sec A) | Schedule, Live Verification, Session Info |
 | 🎓 **Student** | `24EARIT001` | `student123` | Rohan Verma (IT, Sec B) | Schedule, Live Verification, Session Info |
 | 👨‍🏫 **Faculty** | `faculty.rajesh` | `faculty123` | Prof. Rajesh Kumar (CS) | Manage Students, Upload Sheet, Timetable |
-| 🛡️ **Admin** | `admin` | `admin123` | System Administrator (ACEIT) | Full System & Database Controls |
+| 🛡️ **Admin** | `admin` | `admin123` | System Administrator (Extremis) | Full System & Database Controls |
 
 ---
 
 ## ✨ Key Feature Walkthrough
 
 ### 1. Split-Screen Sign In with Capsule Role Switcher
-- Left navy hero (`#0B1E36`) showcases official Arya College branding.
+- Left navy hero (`#0B1E36`) showcases official Extremis branding.
 - Segmented capsule toggle: `Student` | `Faculty` | `Admin`.
 - 1-click demo buttons for rapid evaluation.
 - Live single-device policy notice banner.
 
 ### 2. Student Desktop Portal (Expansive 2-Column Layout)
-- **Top Navigation Bar:** Live real-time campus clock (`10:00:00 AM · ACEIT Campus Realtime`), initials avatar badge, student department and enrollment ID.
+- **Top Navigation Bar:** Live real-time campus clock (`10:00:00 AM · Campus Realtime`), initials avatar badge, student department and enrollment ID.
 - **Hero Active Class Card:** High-contrast royal blue gradient hero banner highlighting the ongoing class (e.g., *Data Structures & Algorithms in LT-102*), with a pulsed indicator for open 5-minute verification windows.
 - **Schedule Column:** Dynamic timeline cards showing today's lecture schedule, faculty name, room number, scheduled scan times, and live status pills (*Verified (Present)* vs. *Verify Attendance*).
 - **Security & Policy Sidebar:**
@@ -116,14 +115,14 @@ The system adheres strictly to the official enrollment numbering formats of Arya
 
 ### 4. Bulk Student Sheet Upload (CSV / Excel)
 - Accessible by both **Admin** and **Faculty**.
-- **1-Click Template Download:** Generates `Arya_College_Student_Template.csv` formatted with required headers:
+- **1-Click Template Download:** Generates `Extremis_Student_Template.csv` formatted with required headers:
   ```csv
-  Full Name,Student College Email ID,Branch,Section,Enrollment No.
-  Aarav Sharma,aarav.24earcs001@aryacollege.in,Computer Science & Engineering,A,24EARCS001
-  Priya Rathore,priya.24earad001@aryacollege.in,Artificial Intelligence & Data Science,A,24EARAD001
-  Rohan Verma,rohan.24earit001@aryacollege.in,Information Technology,B,24EARIT001
+  Full Name,Student Email ID,Branch,Section,Enrollment No.
+  Aarav Sharma,aarav.cs001@extremis.edu,Computer Science & Engineering,A,24EARCS001
+  Priya Rathore,priya.ad001@extremis.edu,Artificial Intelligence & Data Science,A,24EARAD001
+  Rohan Verma,rohan.it001@extremis.edu,Information Technology,B,24EARIT001
   ```
-- **Live In-Browser Parser:** Validates Arya enrollment numbers (`24EAR...`), verifies sections, and renders an interactive preview table before import.
+- **Live In-Browser Parser:** Validates enrollment numbers, verifies sections, and renders an interactive preview table before import.
 - **Automated Credential Provisioning:** Creates student records and matching login accounts (`Username = Enrollment No.`, `Password = student123`).
 
 ### 5. In-App Interactive Database Viewer
@@ -263,9 +262,9 @@ mvn test
 
 ---
 
-## 📜 Academic PBL Certification
-
-- **Institution:** Arya College of Engineering and IT (ACEIT), Jaipur
+## 📜 Project Details
+ 
+- **Project:** Extremis Smart Attendance Management System
 - **Subject:** Java Project-Based Learning (PBL)
 - **Year:** 2026–2027
 - **License:** MIT License — Open for academic demonstration and enhancement.
