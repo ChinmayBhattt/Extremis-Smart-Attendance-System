@@ -1,0 +1,11 @@
+{
+  "name": "extremis",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Extremis Smart Attendance System runner scripts",
+  "scripts": {
+    "dev": "mvn spring-boot:run",
+    "start": "mvn spring-boot:run",
+    "build": "mvn clean package -DskipTests"
+  }
+}
